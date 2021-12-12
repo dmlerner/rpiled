@@ -1,18 +1,21 @@
 import board
+import time
 import busio
 import adafruit_pca9685
 
-pca = None
+#pca = None
 MAX_DUTY_CYCLE = 2**16-1
 
 def get_pca(frequency=None):
-    global pca
-    if not pca:
-        i2c_bus = busio.I2C(board.SCL, board.SDA)
-        pca = adafruit_pca9685.PCA9685(i2c_bus)
+    #global pca
+    #if not pca:
+    i2c_bus = busio.I2C(board.SCL, board.SDA)
+    pca = adafruit_pca9685.PCA9685(i2c_bus)
+    pca.frequency = 2441
 
-    if frequency and pca.frequency != frequency:
-        pca.frequency = frequency
+    #if frequency is not None and pca.frequency != frequency:
+        #print('setting freq', frequency)
+        #pca.frequency = frequency
 
     return pca
 
@@ -37,7 +40,14 @@ def to_milli_percent(duty_cycle):
 
 def set_brightness(channel, milli_percent): 
     duty_cycle = to_duty_cycle(milli_percent)
-    print('mp, dc', milli_percent, duty_cycle)
+    print('chan, mp, dc', channel, milli_percent, duty_cycle)
     pca = get_pca()
+    before = [c.duty_cycle for c in pca.channels]
+    if pca.channels[channel].duty_cycle == duty_cycle:
+        print('no change')
+        return
     pca.channels[channel].duty_cycle = duty_cycle
-    return pca
+    after = [c.duty_cycle for c in pca.channels]
+    print(before)
+    print(after)
+    assert before != after
