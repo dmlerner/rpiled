@@ -43,11 +43,12 @@ def set_brightness(channel, milli_percent):
     print('chan, mp, dc', channel, milli_percent, duty_cycle)
     pca = get_pca()
     before = [c.duty_cycle for c in pca.channels]
-    if pca.channels[channel].duty_cycle == duty_cycle:
+    print(pca.channels[channel].duty_cycle, duty_cycle)
+    if abs(pca.channels[channel].duty_cycle/(duty_cycle+.0000001) - 1) < .005:
         print('no change')
         return
     pca.channels[channel].duty_cycle = duty_cycle
     after = [c.duty_cycle for c in pca.channels]
     print(before)
     print(after)
-    assert before != after
+    #assert before != after
