@@ -2,16 +2,16 @@ import time
 imported = False
 
 def import_all():
-    global imported
+    global imported, board, busio, adafruit_pca9685
     if imported:
-        return
+        return True
 
     try:
         import board
         import busio
         import adafruit_pca9685
         imported = True
-    except:
+    except e:
         pass
 
     return imported
@@ -23,6 +23,7 @@ def get_pca(frequency=None):
     #global pca
     #if not pca:
     if not import_all():
+        print('failed to get pca')
         return
     i2c_bus = busio.I2C(board.SCL, board.SDA)
     pca = adafruit_pca9685.PCA9685(i2c_bus)
@@ -74,10 +75,12 @@ def set_brightnesses(milli_percents):
     pca = get_pca()
     if not pca:
         return
-    before = [c.duty_cycle for c in pca.channels]
-    want = [to_duty_cycle(milli_percents[cid]) for cid in range(len(before))]
+    print(milli_percents)
+    before = {i:c.duty_cycle for (i, c) in enumerate(pca.channels)}
+    want = {cid: to_duty_cycle(milli_percents[cid]) for cid in milli_percents}
     # TODO check if no change
-    for duty_cycle, c in zip(want, pca.channels):
-        c.duty_cycle = duty_cycle
+    for i, c in enumerate(pca.channels):
+        if i in want:
+            c.duty_cycle = want[i]
     return [c.duty_cycle for c in pca.channels]
 
