@@ -72,6 +72,7 @@ def set_brightness(channel, milli_percent):
     #assert before != after
 
 def set_brightnesses(milli_percents):
+    # TODO: color abbrev
     pca = get_pca()
     if not pca:
         return
