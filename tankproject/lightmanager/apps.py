@@ -9,4 +9,4 @@ class LightmanagerConfig(AppConfig):
     #def ready(self):
         #channels = models.PWMChannel.objects.get()
         #for c in channels:
-            #pcanew.set_channel(c.index, c.milli_percent)
+            #pcanew.set_channel(c.index, c.milli)

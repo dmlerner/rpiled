@@ -45,14 +45,15 @@ def myround(x):
 def bound_duty(d):
     return max(0, min(MAX_DUTY_CYCLE, d))
 
+MILLI = 100 # TODO RENAME
 def to_duty_cycle(milli_percent):
-    proportion = float(milli_percent)/100/1000
+    proportion = float(milli_percent)/100/MILLI
     raw_duty_cycle = proportion * MAX_DUTY_CYCLE
     print('rdc, prop', raw_duty_cycle, proportion)
     return bound_duty(int(raw_duty_cycle))
 
 def to_milli_percent(duty_cycle):
-    return float(duty_cycle) / (2**16-1)*100*1000
+    return float(duty_cycle) / (2**16-1)*100*MILLI
 
 def set_brightness(channel, milli_percent):
     duty_cycle = to_duty_cycle(milli_percent)
@@ -77,11 +78,13 @@ def set_brightnesses(milli_percents):
     if not pca:
         return
     print(milli_percents)
+
     before = {i:c.duty_cycle for (i, c) in enumerate(pca.channels)}
     want = {cid: to_duty_cycle(milli_percents[cid]) for cid in milli_percents}
-    # TODO check if no change
     for i, c in enumerate(pca.channels):
         if i in want:
-            c.duty_cycle = want[i]
+            # prevents flashing
+            if c.duty_cycle != want[i]:
+                c.duty_cycle = want[i]
     return [c.duty_cycle for c in pca.channels]
 
