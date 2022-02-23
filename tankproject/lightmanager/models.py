@@ -31,6 +31,7 @@ def get_channel(channel_id):
     return channel
 
 def get_keys_and_channel(k):
+    ''' k is a color, color abbreviation, or channel index '''
     for channel_id in CHANNEL_IDS:
         channel = get_channel(channel_id)
         keys = get_keys(channel)

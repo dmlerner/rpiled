@@ -1,4 +1,5 @@
 import time
+import traceback
 imported = False
 
 def import_all():
@@ -11,29 +12,35 @@ def import_all():
         import busio
         import adafruit_pca9685
         imported = True
-    except e:
-        pass
+    except Exception:
+        traceback.print_exc()
 
     return imported
 
 #pca = None
 MAX_DUTY_CYCLE = 2**16-1
+PCA = None
 
 def get_pca(frequency=None):
+    global PCA
+    if PCA:
+        print('already initialized pca, returning', PCA)
+        return PCA
+
     #global pca
     #if not pca:
     if not import_all():
         print('failed to get pca')
         return
     i2c_bus = busio.I2C(board.SCL, board.SDA)
-    pca = adafruit_pca9685.PCA9685(i2c_bus)
-    pca.frequency = 2441
+    PCA = adafruit_pca9685.PCA9685(i2c_bus)
+    PCA.frequency = 2441
 
     #if frequency is not None and pca.frequency != frequency:
         #print('setting freq', frequency)
         #pca.frequency = frequency
-
-    return pca
+    print('made new pca, returning: ', PCA)
+    return PCA
 
 def myround(x):
     if x < .1:
@@ -73,18 +80,20 @@ def set_brightness(channel, milli_percent):
     #assert before != after
 
 def set_brightnesses(milli_percents):
-    # TODO: color abbrev
+    print('set_brightnesses', milli_percents)
     pca = get_pca()
     if not pca:
+        print('not pca')
         return
-    print(milli_percents)
 
     before = {i:c.duty_cycle for (i, c) in enumerate(pca.channels)}
     want = {cid: to_duty_cycle(milli_percents[cid]) for cid in milli_percents}
+    return
     for i, c in enumerate(pca.channels):
         if i in want:
             # prevents flashing
             if c.duty_cycle != want[i]:
+                print(f'setting channel {i} = {want[i]}')
                 c.duty_cycle = want[i]
     return [c.duty_cycle for c in pca.channels]
 

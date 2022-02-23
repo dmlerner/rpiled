@@ -16,24 +16,12 @@ def set_brightness(request, channel_id, milli_percent):
 
 def get_only(request):
     x = request.GET.get('only', None)
-    if x in ('False', '0', 0, False, ''):
-        return False
-    return True
+    return str(x).lower() in ('true', '1', '')
 
 def set_brightnesses(request):
     milli_percents = {}
     # first, load the current channel states (brightnesses)
     default = request.GET.get('default', 0)
-    '''
-    any key present 
-        value present
-            set to that
-        value missing
-            set to default
-    key missing
-        only -> no change
-        not only -> set to default
-    '''
     only = get_only(request)
     print(f'default={default}')
     print(f'only={only}')
