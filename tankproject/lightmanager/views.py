@@ -18,11 +18,17 @@ def get_only(request):
     x = request.GET.get('only', None)
     return str(x).lower() in ('true', '1', '')
 
+def get_relative(request):
+    # TODO DRY
+    x = request.GET.get('relative', None)
+    return str(x).lower() in ('true', '1', '')
+
 def set_brightnesses(request):
     milli_percents = {}
     # first, load the current channel states (brightnesses)
     default = request.GET.get('default', 0)
-    only = get_only(request)
+    only = get_only(request) # defaults to false
+    relative = get_relative(request) # defaults to false
     print(f'default={default}')
     print(f'only={only}')
     for channel_id in models.CHANNEL_IDS: 
@@ -47,7 +53,7 @@ def set_brightnesses(request):
             print(e)
             print('skip', channel_id, milli_percent)
 
-    pcanew.set_brightnesses(milli_percents)
+    pcanew.set_brightnesses(milli_percents, relative=relative)
     return HttpResponse(f'Setting channels: {milli_percents}')
 
 def get_brightness(request, channel_id):
