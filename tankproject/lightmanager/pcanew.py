@@ -88,7 +88,6 @@ def set_brightnesses(milli_percents):
 
     before = {i:c.duty_cycle for (i, c) in enumerate(pca.channels)}
     want = {cid: to_duty_cycle(milli_percents[cid]) for cid in milli_percents}
-    return
     for i, c in enumerate(pca.channels):
         if i in want:
             # prevents flashing
