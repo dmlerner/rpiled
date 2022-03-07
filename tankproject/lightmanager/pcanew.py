@@ -1,7 +1,7 @@
 import time
 import traceback
 imported = False
-DEBUG = False
+DEBUG = True
 
 def debug(*x):
     if DEBUG:
@@ -76,15 +76,17 @@ def to_duty_cycle(milli_percent):
 def to_milli_percent(duty_cycle):
     return float(duty_cycle) / (2**16-1)*100*MILLI
 
-def set_brightness(channel, milli_percent, relative=False, pca=None):
+def set_brightness(channel, milli_percent, relative=False, scale=False, pca=None):
     duty_cycle = to_duty_cycle(milli_percent)
-    debug('chan, mp, dc, relative', channel, milli_percent, duty_cycle, relative)
+    debug('chan, mp, dc, relative, scale', channel, milli_percent, duty_cycle, relative, scale)
     pca = pca or get_pca()
     if not pca:
         return
     duty_cycle_before = pca.channels[channel].duty_cycle
     if relative:
         duty_cycle += duty_cycle_before
+    elif scale:
+        duty_cycle = duty_cycle_before * milli_percent 
     duty_cycle = bound_duty(int(duty_cycle))
     if close(duty_cycle, duty_cycle_before):
         return
@@ -103,7 +105,7 @@ def close(a, b):
     rel_max = max(a, b) / avg
     return abs(rel_max - 1) < .005
 
-def set_brightnesses(milli_percents, relative=False):
+def set_brightnesses(milli_percents, relative=False, scale=False):
     debug('set_brightnesses', milli_percents)
     pca = get_pca()
     if not pca:
@@ -111,4 +113,4 @@ def set_brightnesses(milli_percents, relative=False):
         return
 
     for cid, mp in milli_percents.items():
-        set_brightness(cid, mp, relative, pca)
+        set_brightness(cid, mp, relative, scale, pca)

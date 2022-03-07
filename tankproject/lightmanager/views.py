@@ -15,12 +15,16 @@ def set_brightness(request, channel_id, milli_percent):
     return HttpResponse(f'Setting channel {channel_id} to {milli_percent}%')
 
 def get_only(request):
-    x = request.GET.get('only', None)
-    return str(x).lower() in ('true', '1', '')
+    return get_default_false(request, 'only')
 
 def get_relative(request):
-    # TODO DRY
-    x = request.GET.get('relative', None)
+    return get_default_false(request, 'relative')
+
+def get_scale(request):
+    return get_default_false(request, 'scale')
+
+def get_default_false(request, key):
+    x = request.GET.get(key.lower(), None)
     return str(x).lower() in ('true', '1', '')
 
 def set_brightnesses(request):
@@ -29,6 +33,7 @@ def set_brightnesses(request):
     default = request.GET.get('default', 0)
     only = get_only(request) # defaults to false
     relative = get_relative(request) # defaults to false
+    scale = get_scale(request) # defaults to false
     print(f'default={default}')
     print(f'only={only}')
     for channel_id in models.CHANNEL_IDS: 
@@ -48,12 +53,17 @@ def set_brightnesses(request):
             print('set', channel_id, milli_percent)
             channel = models.get_channel(channel_id)
             milli_percents[channel_id] = milli_percent
-            channel.milli_percent = milli_percent
+            if scale:
+                channel.milli_percent *= milli_percent # TODO awkwardly not milli
+            elif relative:
+                channel.milli_percent += milli_percent
+            else:
+                channel.milli_percent = milli_percent
         except Exception as e:
             print(e)
             print('skip', channel_id, milli_percent)
 
-    pcanew.set_brightnesses(milli_percents, relative=relative)
+    pcanew.set_brightnesses(milli_percents, relative=relative, scale=scale)
     return HttpResponse(f'Setting channels: {milli_percents}')
 
 def get_brightness(request, channel_id):
