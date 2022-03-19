@@ -1,7 +1,7 @@
 import time
 import traceback
 imported = False
-DEBUG = True
+DEBUG = False
 
 def debug(*x):
     if DEBUG:
@@ -79,14 +79,18 @@ def to_milli_percent(duty_cycle):
 def set_brightness(channel, milli_percent, relative=False, scale=False, pca=None):
     duty_cycle = to_duty_cycle(milli_percent)
     debug('chan, mp, dc, relative, scale', channel, milli_percent, duty_cycle, relative, scale)
+
     pca = pca or get_pca()
     if not pca:
         return
+
     duty_cycle_before = pca.channels[channel].duty_cycle
+    assert not (relative and scale)
     if relative:
         duty_cycle += duty_cycle_before
-    elif scale:
+    if scale:
         duty_cycle = duty_cycle_before * milli_percent 
+
     duty_cycle = bound_duty(int(duty_cycle))
     if close(duty_cycle, duty_cycle_before):
         return
@@ -99,11 +103,33 @@ def set_brightness(channel, milli_percent, relative=False, scale=False, pca=None
     #assert before != after
 
 def close(a, b):
+    obob = abs(a-b) < 1
+    if obob:
+        if a != b:
+            print('wtf', a, b)
+    return obob
+
+def close_rel(a, b):
     avg = (a+b)/2
     if avg == 0:
         return True
     rel_max = max(a, b) / avg
     return abs(rel_max - 1) < .005
+
+def smooth_set_brightnesses(milli_percents, t=1, n=10, relative=False, scale=False):
+    get_elapsed_time() # mark start time
+    dt = t/n
+    assert relative ^ scale
+    # TODO: support absolute
+    if relative:
+        milli_percents = { k: v/n for (k, v) in milli_percents.items()}
+    if scale:
+        milli_percents = { k: v**(1/n) for (k, v) in milli_percents.items()}
+    for step in range(n):
+        set_brightnesses(milli_percents, relative, scale)
+        step_time = get_elapsed_time()
+        time.sleep(max(0, dt - step_time))
+
 
 def set_brightnesses(milli_percents, relative=False, scale=False):
     debug('set_brightnesses', milli_percents)

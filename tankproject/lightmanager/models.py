@@ -21,7 +21,9 @@ class PWMChannel(models.Model):
 def get_color_map():
     color_map = {}
     for channel_id in CHANNEL_IDS:
-        channel = get_channel(i)
+        channel = get_channel(channel_id)
+        for k in get_keys(channel_id):
+            color_map[k] = channel
         color_map[channel.color] = color_map[channel.color_abbreviation] = color_map[channel_id] = channel
     return color_map
 
@@ -37,6 +39,12 @@ def get_keys_and_channel(k):
         keys = get_keys(channel)
         if k in keys:
             return keys, channel
+
+def get_all_keys_and_channels():
+    return {k: get_keys_and_channel(k) for k in CHANNEL_IDS}
+
+def get_brightnesses():
+    return {k: get_channel(k).milli_percent for k in CHANNEL_IDS}
 
 def get_keys(channel):
     return channel.index, channel.color, channel.color_abbreviation
