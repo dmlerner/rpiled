@@ -48,3 +48,23 @@ def get_brightnesses():
 
 def get_keys(channel):
     return channel.index, channel.color, channel.color_abbreviation
+
+def is_warm(k):
+    return is_warm_by_all_keys[k]
+    #keys_and_channels = get_all_keys_and_channels()
+    #return any(k in keys for (keys, channel) in keys_and_channels.values())
+def is_cool(k):
+    return not is_warm(k)
+
+# TODO: read from db
+WARM_COLORS = 'amber,red,warm white,spot white'.split(',')
+COOL_COLORS = 'cool white,green,blue,violet'.split(',')
+# TODO: is green warm?
+keys_and_channel_by_key = get_all_keys_and_channels()
+is_warm_by_all_keys = {}
+for k in keys_and_channel_by_key:
+    keys, channel = keys_and_channel_by_key[k]
+    warm = set(WARM_COLORS) & set(keys)
+    for k2 in keys:
+        is_warm_by_all_keys[k2] = warm
+

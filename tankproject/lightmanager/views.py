@@ -38,17 +38,26 @@ def get_default_false(request, key):
     return str(x).lower() in ('true', '1', '')
 
 def set_brightnesses(request):
-    milli_percents = {}
     # first, load the current channel states (brightnesses)
+    options = default, only, relative, scale, smooth, request_brightness_by_channel_id = load_options(request)
+    return f(*options)
+
+def load_options(request):
     default = request.GET.get('default', 0)
     only = get_only(request) # defaults to false
     relative = get_relative(request) # defaults to false
     scale = get_scale(request) # defaults to false
     smooth = get_smooth(request)
+    request_brightness_by_channel_id = { channel_id: get_request_brightness(request, channel_id) for channel_id in models.CHANNEL_IDS}
     debug(f'default={default}')
     debug(f'only={only}')
+    return default, only, relative, scale, smooth, request_brightness_by_channel_id
+
+# TODO: rename stuff
+def f(default, only, relative, scale, smooth, request_brightness_by_channel_id):
+    milli_percents = {}
     for channel_id in models.CHANNEL_IDS: 
-        milli_percent = get_brightness(request, channel_id)
+        milli_percent = request_brightness_by_channel_id.get(channel_id)
         debug(f'channel_id={channel_id}')
         debug(f'milli_percent={milli_percent}')
 
@@ -83,12 +92,44 @@ def set_brightnesses(request):
     # TODO: these values are wrong at least sometimes.
     return HttpResponse(f'Setting channels: {models.get_brightnesses()}')
 
-def get_brightness(request, channel_id):
+def get_request_brightness(request, channel_id):
     keys, channel = models.get_keys_and_channel(channel_id)
     bs = [request.GET.get(str(k), None) for k in keys]
     bs = [b for b in bs if b is not None]
     assert len(bs) <= 1
     if len(bs) == 1:
         return bs.pop()
+
+def uhhh(request, channel_id):
+    is_warm = models.is_warm(channel_id)
+    warmer = request.GET.get('warmer', None)
+    cooler = request.GET.get('cooler', None)
+
+def warmer(request):
+    options = default, only, relative, scale, smooth, request_brightness_by_channel_id = load_options(request)
+    # ignore request_brightness_by_channel_id
+    # TODO: support relative and overrides and such. 
+    # will require factoring out more of `f`
+    assert default
+    default = float(default)
+    warm_brightness = default
+    cool_brightness = 1/default
+    brightness_by_channel_id = { k: warm_brightness if models.is_warm(k) else cool_brightness for k in models.CHANNEL_IDS}
+    return f(*options[:-1], brightness_by_channel_id)
+#TODO: dry
+def cooler(request):
+    options = default, only, relative, scale, smooth, request_brightness_by_channel_id = load_options(request)
+    # ignore request_brightness_by_channel_id
+    # TODO: support relative and overrides and such. 
+    # will require factoring out more of `f`
+    assert default
+    default = float(default)
+    warm_brightness = 1/default
+    cool_brightness = default
+    # TODO: is_warm is very slow probably
+    brightness_by_channel_id = { k: warm_brightness if models.is_warm(k) else cool_brightness for k in models.CHANNEL_IDS}
+    return f(*options[:-1], brightness_by_channel_id)
+
+
 
 
