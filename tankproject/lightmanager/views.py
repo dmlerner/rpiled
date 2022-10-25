@@ -114,7 +114,7 @@ def warmer(request):
     default = float(default)
     warm_brightness = default
     cool_brightness = 1/default
-    brightness_by_channel_id = { k: warm_brightness if models.is_warm(k) else cool_brightness for k in models.CHANNEL_IDS}
+    brightness_by_channel_id = { k: get_warmer_factor(k, default) for k in models.CHANNEL_IDS}
     return f(*options[:-1], brightness_by_channel_id)
 #TODO: dry
 def cooler(request):
@@ -127,8 +127,16 @@ def cooler(request):
     warm_brightness = 1/default
     cool_brightness = default
     # TODO: is_warm is very slow probably
-    brightness_by_channel_id = { k: warm_brightness if models.is_warm(k) else cool_brightness for k in models.CHANNEL_IDS}
+    brightness_by_channel_id = { k: 1/get_warmer_factor(k, default) for k in models.CHANNEL_IDS}
     return f(*options[:-1], brightness_by_channel_id)
+
+def get_warmer_factor(channel_id, factor):
+    if models.is_warm(channel_id):
+        return factor
+    if models.is_cool(channel_id):
+        return 1/factor
+    return 1
+
 
 
 
