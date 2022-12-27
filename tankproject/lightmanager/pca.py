@@ -1,5 +1,7 @@
 import time
 import traceback
+import utils
+
 imported = False
 DEBUG = False
 
@@ -56,13 +58,6 @@ def get_pca(frequency=None):
     debug('made new pca, returning: ', PCA)
     return PCA
 
-def myround(x):
-    if x < .1:
-        return round(x, 2)
-    if x < 1:
-        return round(x, 1)
-    return round(x)
-
 def bound_duty(d):
     return max(0, min(MAX_DUTY_CYCLE, d))
 
@@ -92,7 +87,7 @@ def set_brightness(channel, milli_percent, relative=False, scale=False, pca=None
         duty_cycle = duty_cycle_before * milli_percent
 
     duty_cycle = bound_duty(int(duty_cycle))
-    if close(duty_cycle, duty_cycle_before):
+    if utils.close(duty_cycle, duty_cycle_before):
         return
 
     pca.channels[channel].duty_cycle = duty_cycle
@@ -101,20 +96,6 @@ def set_brightness(channel, milli_percent, relative=False, scale=False, pca=None
     #debug(after)
     get_elapsed_time()
     #assert before != after
-
-def close(a, b):
-    obob = abs(a-b) < 1
-    if obob:
-        if a != b:
-            print('wtf', a, b)
-    return obob
-
-def close_rel(a, b):
-    avg = (a+b)/2
-    if avg == 0:
-        return True
-    rel_max = max(a, b) / avg
-    return abs(rel_max - 1) < .005
 
 def set_brightnesses(milli_percents, relative=False, scale=False):
     debug('set_brightnesses', milli_percents)

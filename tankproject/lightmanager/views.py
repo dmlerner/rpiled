@@ -12,14 +12,6 @@ def debug(*x):
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
-def set_brightness(request, channel_id, milli_percent):
-    channel, created = models.PWMChannel.objects.get_or_create(index=channel_id)
-    channel.milli_percent = milli_percent
-    pca.set_brightness(channel.index, milli_percent)
-    channel.save()
-    debug(channel_id, milli_percent)
-    return HttpResponse(f'Setting channel {channel_id} to {milli_percent}%')
-
 def get_only(request):
     return get_default_false(request, 'only')
 
