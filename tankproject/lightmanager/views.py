@@ -29,17 +29,13 @@ def get_relative(request):
 def get_scale(request):
     return get_default_false(request, 'scale')
 
-def get_smooth(request):
-    return get_default_false(request, 'smooth')
-
-
 def get_default_false(request, key):
     x = request.GET.get(key.lower(), None)
     return str(x).lower() in ('true', '1', '')
 
 def set_brightnesses(request):
     # first, load the current channel states (brightnesses)
-    options = default, only, relative, scale, smooth, request_brightness_by_channel_id = load_options(request)
+    options = default, only, relative, scale, request_brightness_by_channel_id = load_options(request)
     return f(*options)
 
 def load_options(request):
@@ -47,14 +43,13 @@ def load_options(request):
     only = get_only(request) # defaults to false
     relative = get_relative(request) # defaults to false
     scale = get_scale(request) # defaults to false
-    smooth = get_smooth(request)
     request_brightness_by_channel_id = { channel_id: get_request_brightness(request, channel_id) for channel_id in models.CHANNEL_IDS}
     debug(f'default={default}')
     debug(f'only={only}')
-    return default, only, relative, scale, smooth, request_brightness_by_channel_id
+    return default, only, relative, scale, request_brightness_by_channel_id
 
 # TODO: rename stuff
-def f(default, only, relative, scale, smooth, request_brightness_by_channel_id):
+def f(default, only, relative, scale, request_brightness_by_channel_id):
     milli_percents = {}
     for channel_id in models.CHANNEL_IDS:
         milli_percent = request_brightness_by_channel_id.get(channel_id)
@@ -84,10 +79,7 @@ def f(default, only, relative, scale, smooth, request_brightness_by_channel_id):
             debug(e)
             debug('skip', channel_id, milli_percent)
 
-    if smooth:
-        pca.smooth_set_brightnesses(milli_percents, relative=relative, scale=scale)
-    else:
-        pca.set_brightnesses(milli_percents, relative=relative, scale=scale)
+    pca.set_brightnesses(milli_percents, relative=relative, scale=scale)
 
     # TODO: these values are wrong at least sometimes.
     return HttpResponse(f'Setting channels: {models.get_brightnesses()}')
@@ -106,7 +98,7 @@ def uhhh(request, channel_id):
     cooler = request.GET.get('cooler', None)
 
 def warmer(request):
-    options = default, only, relative, scale, smooth, request_brightness_by_channel_id = load_options(request)
+    options = default, only, relative, scale, request_brightness_by_channel_id = load_options(request)
     # ignore request_brightness_by_channel_id
     # TODO: support relative and overrides and such.
     # will require factoring out more of `f`
@@ -118,7 +110,7 @@ def warmer(request):
     return f(*options[:-1], brightness_by_channel_id)
 #TODO: dry
 def cooler(request):
-    options = default, only, relative, scale, smooth, request_brightness_by_channel_id = load_options(request)
+    options = default, only, relative, scale, request_brightness_by_channel_id = load_options(request)
     # ignore request_brightness_by_channel_id
     # TODO: support relative and overrides and such.
     # will require factoring out more of `f`

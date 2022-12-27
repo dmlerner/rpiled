@@ -9,7 +9,7 @@ def debug(*x):
 
 def get_elapsed_time(show=True):
     now = time.time()
-    delta = now - get_elapsed_time.t 
+    delta = now - get_elapsed_time.t
     get_elapsed_time.t = now
     if show:
         debug('elapsed time: ', delta)
@@ -89,7 +89,7 @@ def set_brightness(channel, milli_percent, relative=False, scale=False, pca=None
     if relative:
         duty_cycle += duty_cycle_before
     if scale:
-        duty_cycle = duty_cycle_before * milli_percent 
+        duty_cycle = duty_cycle_before * milli_percent
 
     duty_cycle = bound_duty(int(duty_cycle))
     if close(duty_cycle, duty_cycle_before):
@@ -115,21 +115,6 @@ def close_rel(a, b):
         return True
     rel_max = max(a, b) / avg
     return abs(rel_max - 1) < .005
-
-def smooth_set_brightnesses(milli_percents, t=1, n=10, relative=False, scale=False):
-    get_elapsed_time() # mark start time
-    dt = t/n
-    assert relative ^ scale
-    # TODO: support absolute
-    if relative:
-        milli_percents = { k: v/n for (k, v) in milli_percents.items()}
-    if scale:
-        milli_percents = { k: v**(1/n) for (k, v) in milli_percents.items()}
-    for step in range(n):
-        set_brightnesses(milli_percents, relative, scale)
-        step_time = get_elapsed_time()
-        time.sleep(max(0, dt - step_time))
-
 
 def set_brightnesses(milli_percents, relative=False, scale=False):
     debug('set_brightnesses', milli_percents)
