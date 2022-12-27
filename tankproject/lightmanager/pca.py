@@ -1,141 +1,142 @@
 import time
-import threading
+import traceback
+imported = False
+DEBUG = False
 
-import RPi.GPIO as g
-from board import SCL, SDA
-import busio
-from adafruit_pca9685 import PCA9685
+def debug(*x):
+    if DEBUG:
+        print(*x)
 
-def bound(minimum, maximum, x):
-    return min(maximum, max(minimum, x))
+def get_elapsed_time(show=True):
+    now = time.time()
+    delta = now - get_elapsed_time.t 
+    get_elapsed_time.t = now
+    if show:
+        debug('elapsed time: ', delta)
+    return delta
+get_elapsed_time.t = time.time()
 
-class PWMController:
-    MAX_DUTY_CYCLE = 2**16-1
-    MAX_FREQUENCY = 2441
+def import_all():
+    global imported, board, busio, adafruit_pca9685
+    if imported:
+        return True
 
-    def __init__(self, n_channels=8, frequency=PWMController.MAX_FREQUENCY):
-        self.pca = PCA9685(busio.I2C(SCL, SDA))
-        self.n_channels = n_channels
-        self.pca.frequency = frequency
+    try:
+        import board
+        import busio
+        import adafruit_pca9685
+        imported = True
+    except Exception:
+        traceback.debug_exc()
 
-    @staticmethod
-    def to_duty_cycle(percent):
-        percent = float(percent)
-        duty_cycle = percent/100 * PWMController.MAX_DUTY_CYCLE
-        return int(bound(0, PWMController.MAX_DUTY_CYCLE, duty_cycle))
+    return imported
 
-    @staticmethod
-    def to_percent(duty_cycle):
-        duty_cycle = float(duty_cycle)
-        percent = duty_cycle/PWMController.MAX_DUTY_CYCLE * 100
-        return percent
+#pca = None
+MAX_DUTY_CYCLE = 2**16-1
+PCA = None
 
-    def set_brightness(self, percent, *channels):
-        for c in channels:
-            self[c].brightness = to_duty_cycle(percent)
+def get_pca(frequency=None):
+    global PCA
+    if PCA:
+        debug('already initialized pca, returning', PCA)
+        return PCA
 
-    def get_channels(self):
-        return self.pca.channels[:self.n_channels]
-
-    def __getitem__(self, i):
-        return self.get_channels()[i]
-
-    def __iter__(self):
-        for channel in self.get_channels()
-            yield channel
-
-
-def smooth_set_brightness(percent, channel, fade_time=1, steps=None, step_time=.01):
-    # TODO
-    #print('start', channel, int(time.time()%1000))
-    if fade_time == 0:
-        return set_brightness(percent, channel)
-
-    if steps is None:
-        steps = fade_time / step_time
-
-    initial_duty_cycle = pca.channels[channel].duty_cycle
-    final_duty_cycle = to_duty_cycle(percent)
-    ratio = abs((.000001+initial_duty_cycle)/(.000001+final_duty_cycle))
-    #print(initial_duty_cycle, final_duty_cycle, ratio)
-    tol = 2e-2
-    if 1 - tol < ratio < 1 + tol:
+    #global pca
+    #if not pca:
+    if not import_all():
+        debug('failed to get pca')
         return
-    getting_brighter = final_duty_cycle > initial_duty_cycle
-    clip_function = min if getting_brighter else max
+    i2c_bus = busio.I2C(board.SCL, board.SDA)
+    PCA = adafruit_pca9685.PCA9685(i2c_bus)
+    PCA.frequency = 2441
 
-    step_duty_cycle = (final_duty_cycle - initial_duty_cycle) / steps
-    step_time = fade_time / steps
-    for step in range(1, int(steps+1)):
-        brightness = step*step_duty_cycle + initial_duty_cycle
-        clipped_brightness = clip_function(brightness, final_duty_cycle)
-        _set_brightness(brightness, channel)
-        time.sleep(step_time)
-    #print(final_duty_cycle, clipped_brightness, brightness)
-    #print('stop', channel, int(time.time()%1000))
-
-def setall(percent=1, cmax=n_channels):
-    for channel in range(cmax):
-        set_brightness(percent, channel)
+    #if frequency is not None and pca.frequency != frequency:
+        #debug('setting freq', frequency)
+        #pca.frequency = frequency
+    debug('made new pca, returning: ', PCA)
+    return PCA
 
 def myround(x):
-    if x < .2:
+    if x < .1:
         return round(x, 2)
     if x < 1:
         return round(x, 1)
     return round(x)
 
-def show_all():
-    print(pca.channels, len(pca.channels))
-    dutys = [c.duty_cycle for c in pca.channels[:n_channels]]
-    percents = list(map(to_percent, dutys))
-    print('\n'.join([f'{i}:{channel_names[i]}: {myround(p)}%' for (i, p) in enumerate(percents)]))
-    print('python3 multichannel.py ' + ' '.join([f'--{channel_names[i]} {myround(p)}' for (i, p) in enumerate(percents)]))
+def bound_duty(d):
+    return max(0, min(MAX_DUTY_CYCLE, d))
 
-def main():
-    if args.test:
-        test()
+MILLI = 100 # TODO RENAME
+def to_duty_cycle(milli_percent):
+    proportion = float(milli_percent)/100/MILLI
+    raw_duty_cycle = proportion * MAX_DUTY_CYCLE
+    debug('rdc, prop', raw_duty_cycle, proportion)
+    return raw_duty_cycle
+
+def to_milli_percent(duty_cycle):
+    return float(duty_cycle) / (2**16-1)*100*MILLI
+
+def set_brightness(channel, milli_percent, relative=False, scale=False, pca=None):
+    duty_cycle = to_duty_cycle(milli_percent)
+    debug('chan, mp, dc, relative, scale', channel, milli_percent, duty_cycle, relative, scale)
+
+    pca = pca or get_pca()
+    if not pca:
         return
 
-    if args.scale:
-        return scale(args.scale)
+    duty_cycle_before = pca.channels[channel].duty_cycle
+    assert not (relative and scale)
+    if relative:
+        duty_cycle += duty_cycle_before
+    if scale:
+        duty_cycle = duty_cycle_before * milli_percent 
 
-    threads = []
+    duty_cycle = bound_duty(int(duty_cycle))
+    if close(duty_cycle, duty_cycle_before):
+        return
 
-    brightness = get_channel_order_percents(args)
-    for channel, percent in enumerate(brightness):
-        t = threading.Thread(target=smooth_set_brightness, args=(percent, channel, args.fadetime))
-        threads.append(t)
+    pca.channels[channel].duty_cycle = duty_cycle
+    #after = [c.duty_cycle for c in pca.channels]
+    #debug(before)
+    #debug(after)
+    get_elapsed_time()
+    #assert before != after
 
-    for t in threads:
-        t.start()
+def close(a, b):
+    obob = abs(a-b) < 1
+    if obob:
+        if a != b:
+            print('wtf', a, b)
+    return obob
 
-    for t in threads:
-        t.join()
+def close_rel(a, b):
+    avg = (a+b)/2
+    if avg == 0:
+        return True
+    rel_max = max(a, b) / avg
+    return abs(rel_max - 1) < .005
 
-def test():
-    n_channels = 8
-    controller = PWMController(n_channels)
-    brightnesses = [0]*n_channels
-    controller.set_brightness(0, range(n_channels))
-    time.sleep(1)
-    for i in range(n_channels):
-        brightnesses[i] = 1
-        for j, b in enumerate(brightnesses):
-            set_brightness(b, j)
-        time.sleep(1)
-        brightnesses[i] = 0
-    setall(0)
+def smooth_set_brightnesses(milli_percents, t=1, n=10, relative=False, scale=False):
+    get_elapsed_time() # mark start time
+    dt = t/n
+    assert relative ^ scale
+    # TODO: support absolute
+    if relative:
+        milli_percents = { k: v/n for (k, v) in milli_percents.items()}
+    if scale:
+        milli_percents = { k: v**(1/n) for (k, v) in milli_percents.items()}
+    for step in range(n):
+        set_brightnesses(milli_percents, relative, scale)
+        step_time = get_elapsed_time()
+        time.sleep(max(0, dt - step_time))
 
-def scale(delta):
-    factor = 1 + delta
-    for i, c in list(enumerate(pca.channels))[:n_channels]:
-        _set_brightness(c.duty_cycle * factor, i)
 
-if __name__ == '__main__':
-    main()
-    show_all()
-#io.run(main())
-'''
-red, spot white, blue, warm white, violet,  amber, green, cool white
-'''
+def set_brightnesses(milli_percents, relative=False, scale=False):
+    debug('set_brightnesses', milli_percents)
+    pca = get_pca()
+    if not pca:
+        debug('not pca')
+        return
+
+    for cid, mp in milli_percents.items():
+        set_brightness(cid, mp, relative, scale, pca)

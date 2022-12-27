@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from . import models
-from . import pcanew
+from . import pca
 
-DEBUG = False
+DEBUG = True
 
 def debug(*x):
     if DEBUG:
@@ -15,7 +15,7 @@ def index(request):
 def set_brightness(request, channel_id, milli_percent):
     channel, created = models.PWMChannel.objects.get_or_create(index=channel_id)
     channel.milli_percent = milli_percent
-    pcanew.set_brightness(channel.index, milli_percent)
+    pca.set_brightness(channel.index, milli_percent)
     channel.save()
     debug(channel_id, milli_percent)
     return HttpResponse(f'Setting channel {channel_id} to {milli_percent}%')
@@ -56,7 +56,7 @@ def load_options(request):
 # TODO: rename stuff
 def f(default, only, relative, scale, smooth, request_brightness_by_channel_id):
     milli_percents = {}
-    for channel_id in models.CHANNEL_IDS: 
+    for channel_id in models.CHANNEL_IDS:
         milli_percent = request_brightness_by_channel_id.get(channel_id)
         debug(f'channel_id={channel_id}')
         debug(f'milli_percent={milli_percent}')
@@ -85,9 +85,9 @@ def f(default, only, relative, scale, smooth, request_brightness_by_channel_id):
             debug('skip', channel_id, milli_percent)
 
     if smooth:
-        pcanew.smooth_set_brightnesses(milli_percents, relative=relative, scale=scale)
+        pca.smooth_set_brightnesses(milli_percents, relative=relative, scale=scale)
     else:
-        pcanew.set_brightnesses(milli_percents, relative=relative, scale=scale)
+        pca.set_brightnesses(milli_percents, relative=relative, scale=scale)
 
     # TODO: these values are wrong at least sometimes.
     return HttpResponse(f'Setting channels: {models.get_brightnesses()}')
@@ -108,7 +108,7 @@ def uhhh(request, channel_id):
 def warmer(request):
     options = default, only, relative, scale, smooth, request_brightness_by_channel_id = load_options(request)
     # ignore request_brightness_by_channel_id
-    # TODO: support relative and overrides and such. 
+    # TODO: support relative and overrides and such.
     # will require factoring out more of `f`
     assert default
     default = float(default)
@@ -120,7 +120,7 @@ def warmer(request):
 def cooler(request):
     options = default, only, relative, scale, smooth, request_brightness_by_channel_id = load_options(request)
     # ignore request_brightness_by_channel_id
-    # TODO: support relative and overrides and such. 
+    # TODO: support relative and overrides and such.
     # will require factoring out more of `f`
     assert default
     default = float(default)
