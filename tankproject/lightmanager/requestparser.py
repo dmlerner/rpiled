@@ -1,6 +1,6 @@
 from django.http import HttpResponse
-from . import models
-from . import pca
+import models
+import pca
 
 DEBUG = True
 

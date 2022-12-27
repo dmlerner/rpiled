@@ -1,9 +1,11 @@
 from django.http import HttpResponse
-from . import models
-from . import pca
-from . import requestparser
+import models
+import realpca
+import requestparser
 
 DEBUG = True
+
+real_pca = realpca.PCA()
 
 
 def debug(*x):
@@ -58,7 +60,7 @@ def f(default, only, relative, scale, request_brightness_by_channel_id):
             debug(e)
             debug("skip", channel_id, milli_percent)
 
-    pca.set_brightnesses(milli_percents, relative=relative, scale=scale)
+    real_pca.set_brightnesses(milli_percents, relative=relative, scale=scale)
 
     # TODO: these values are wrong at least sometimes.
     return HttpResponse(f"Setting channels: {models.get_brightnesses()}")
