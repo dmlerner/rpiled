@@ -1,6 +1,6 @@
 from django.http import HttpResponse
-import models
-import pca
+from lightmanager import models
+from lightmanager import pca
 
 DEBUG = True
 

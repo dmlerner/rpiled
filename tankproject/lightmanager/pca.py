@@ -1,6 +1,6 @@
 import time
 import traceback
-import utils
+from lightmanager import utils
 
 DEBUG = False
 MAX_DUTY_CYCLE = 2**16 - 1

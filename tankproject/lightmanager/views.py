@@ -1,7 +1,7 @@
 from django.http import HttpResponse
-import models
-import realpca
-import requestparser
+from lightmanager import models
+from lightmanager import realpca
+from lightmanager import requestparser
 
 DEBUG = True
 

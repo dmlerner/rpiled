@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-import pca
-import utils
+from lightmanager import pca
+from lightmanager import utils
 
 N_CHANNELS = 8
 

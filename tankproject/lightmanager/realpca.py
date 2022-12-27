@@ -1,7 +1,7 @@
 import time
 import traceback
-import utils
-import pca
+from lightmanager import utils
+from lightmanager import pca
 
 imported = False
 DEBUG = False
