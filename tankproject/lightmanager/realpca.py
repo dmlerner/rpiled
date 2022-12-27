@@ -48,9 +48,10 @@ def create_hardware_pca():
         return
 
     i2c_bus = busio.I2C(board.SCL, board.SDA)
-    self.hardware_pca = adafruit_pca9685.PCA9685(i2c_bus)
-    self.hardware_pca.frequency = pca.FREQUENCY
-    debug("made new pca, returning: ", self.hardware_pca)
+    hardware_pca = adafruit_pca9685.PCA9685(i2c_bus)
+    hardware_pca.frequency = pca.FREQUENCY
+    debug("made new pca, returning: ", hardware_pca)
+    return hardware_pca
 
 
 class PCA(pca.BasePCA):
