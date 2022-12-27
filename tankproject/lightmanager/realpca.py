@@ -53,7 +53,7 @@ def create_hardware_pca():
     debug("made new pca, returning: ", self.hardware_pca)
 
 
-class PCA(pca.AbstractPCA):
+class PCA(pca.BasePCA):
     def get_pca(self, frequency=None):
         if self.hardware_pca:
             debug("already initialized pca, returning", self.hardware_pca)
@@ -61,43 +61,3 @@ class PCA(pca.AbstractPCA):
         self.hardware_pca = create_hardware_pca()
         return self.hardware_pca
 
-    def set_brightness(
-        self, channel, milli_percent, relative=False, scale=False, channels=None
-    ):
-        duty_cycle = pca.to_duty_cycle(milli_percent)
-        debug(
-            "chan, mp, dc, relative, scale",
-            channel,
-            milli_percent,
-            duty_cycle,
-            relative,
-            scale,
-            channels,
-        )
-
-        channels = channels or self.get_pca().channels
-
-        duty_cycle_before = channels[channel].duty_cycle
-        assert not (relative and scale)
-        if relative:
-            duty_cycle += duty_cycle_before
-        if scale:
-            duty_cycle = duty_cycle_before * milli_percent
-
-        duty_cycle = pca.bound_duty(int(duty_cycle))
-        if utils.close(duty_cycle, duty_cycle_before):
-            return
-
-        channels[channel].duty_cycle = duty_cycle
-        # after = [c.duty_cycle for c in pca.channels]
-        # debug(before)
-        # debug(after)
-        get_elapsed_time()
-        # assert before != after
-
-    def set_brightnesses(self, milli_percents, relative=False, scale=False):
-        debug("set_brightnesses", milli_percents)
-        channels = self.get_pca().channels
-
-        for cid, mp in milli_percents.items():
-            set_brightness(cid, mp, relative, scale, channels)
