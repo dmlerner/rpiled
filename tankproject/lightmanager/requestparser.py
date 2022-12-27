@@ -1,6 +1,4 @@
 from django.http import HttpResponse
-from lightmanager import models
-from lightmanager import pca
 
 DEBUG = True
 
@@ -27,13 +25,13 @@ def get_default_false(request, key):
     return str(x).lower() in ("true", "1", "")
 
 
-def load_options(request):
+def load_options(request, models):
     default = request.GET.get("default", 0)
     only = get_only(request)  # defaults to false
     relative = get_relative(request)  # defaults to false
     scale = get_scale(request)  # defaults to false
     request_brightness_by_channel_id = {
-        channel_id: get_request_brightness(request, channel_id)
+        channel_id: get_request_brightness(request, channel_id, models)
         for channel_id in models.CHANNEL_IDS
     }
     debug(f"default={default}")
@@ -41,7 +39,7 @@ def load_options(request):
     return default, only, relative, scale, request_brightness_by_channel_id
 
 
-def get_request_brightness(request, channel_id):
+def get_request_brightness(request, channel_id, models):
     keys, channel = models.get_keys_and_channel(channel_id)
     bs = [request.GET.get(str(k), None) for k in keys]
     bs = [b for b in bs if b is not None]
@@ -50,8 +48,8 @@ def get_request_brightness(request, channel_id):
         return bs.pop()
 
 
-def uhhh(request, channel_id):
-    # not used
-    is_warm = models.is_warm(channel_id)
-    warmer = request.GET.get("warmer", None)
-    cooler = request.GET.get("cooler", None)
+# def uhhh(request, channel_id):
+#     # not used
+#     is_warm = models.is_warm(channel_id)
+#     warmer = request.GET.get("warmer", None)
+#     cooler = request.GET.get("cooler", None)

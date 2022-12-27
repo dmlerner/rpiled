@@ -16,6 +16,8 @@ def debug(*x):
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
 
+def load_options(request):
+    return requestparser.load_options(request, models)
 
 def set_brightnesses(request):
     # first, load the current channel states (brightnesses)
@@ -25,7 +27,7 @@ def set_brightnesses(request):
         relative,
         scale,
         request_brightness_by_channel_id,
-    ) = requestparser.load_options(request)
+    ) = load_options(request)
     return f(*options)
 
 
@@ -73,7 +75,7 @@ def warmer(request):
         relative,
         scale,
         request_brightness_by_channel_id,
-    ) = requestparser.load_options(request)
+    ) = load_options(request)
     # ignore request_brightness_by_channel_id
     # TODO: support relative and overrides and such.
     # will require factoring out more of `f`
@@ -95,7 +97,7 @@ def cooler(request):
         relative,
         scale,
         request_brightness_by_channel_id,
-    ) = requestparser.load_options(request)
+    ) = load_options(request)
     # ignore request_brightness_by_channel_id
     # TODO: support relative and overrides and such.
     # will require factoring out more of `f`
