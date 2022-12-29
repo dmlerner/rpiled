@@ -8,19 +8,20 @@ FREQUENCY = 2441
 
 
 class BasePCA:
-    def __init__(self):
+    def __init__(self, models):
         self.hardware_pca = None
+        self.models = models
 
     def get_pca(self):
         return self.hardware_pca
 
     def set_brightness(
-        self, channel, milli_percent, relative=False, scale=False, channels=None
+        self, channel_id, milli_percent, relative=False, scale=False, channels=None
     ):
         duty_cycle = to_duty_cycle(milli_percent)
         debug(
-            "chan, mp, dc, relative, scale, channels",
-            channel,
+            "channel_id, mp, dc, relative, scale, channels",
+            channel_id,
             milli_percent,
             duty_cycle,
             relative,
@@ -30,7 +31,9 @@ class BasePCA:
 
         channels = channels or self.get_pca().channels
 
-        duty_cycle_before = channels[channel].duty_cycle
+        # TODO: consider checking DB instead for performance.
+        # hm, but not as accurate - what if external change happened?
+        duty_cycle_before = channels[channel_id].duty_cycle
         assert not (relative and scale)
         if relative:
             duty_cycle += duty_cycle_before
@@ -38,22 +41,32 @@ class BasePCA:
             duty_cycle = duty_cycle_before * milli_percent
 
         duty_cycle = bound_duty(int(duty_cycle))
-        if utils.close(duty_cycle, duty_cycle_before):
-            return
+        channel = self.models.get_channel(channel_id)
+        if not utils.close(duty_cycle, duty_cycle_before):
+            channels[channel_id].duty_cycle = duty_cycle
+        # TODO: try except?
+            channel.milli_percent = to_milli_percent(duty_cycle)
+            channel.save()
 
-        channels[channel].duty_cycle = duty_cycle
-        # after = [c.duty_cycle for c in pca.channels]
-        # debug(before)
-        # debug(after)
         get_elapsed_time()
         # assert before != after
+
+        return channel.color_abbreviation, channel.milli_percent
+
 
     def set_brightnesses(self, milli_percents, relative=False, scale=False):
         debug("set_brightnesses", milli_percents)
         channels = self.get_pca().channels
 
+        milli_percent_by_color_abbreviation = {}
+
         for cid, mp in milli_percents.items():
-            self.set_brightness(cid, mp, relative, scale, channels)
+            color_abbreviation, milli_percent = self.set_brightness(cid, mp, relative, scale, channels)
+            milli_percent_by_color_abbreviation[color_abbreviation] = milli_percent
+
+        debug(milli_percent_by_color_abbreviation)
+
+        return milli_percent_by_color_abbreviation
 
     def get_duty_cycles(self):
         return [channel.duty_cycle for channel in self.get_pca().channels]
@@ -91,4 +104,4 @@ def to_duty_cycle(milli_percent):
 
 
 def to_milli_percent(duty_cycle):
-    return float(duty_cycle) / (2**16 - 1) * 100 * MILLI
+    return int(round(float(duty_cycle) / (2**16 - 1) * 100 * MILLI))

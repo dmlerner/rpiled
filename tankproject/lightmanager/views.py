@@ -3,9 +3,9 @@ from lightmanager import models
 from lightmanager import realpca
 from lightmanager import requestparser
 
-DEBUG = True
+DEBUG = False
 
-real_pca = realpca.PCA()
+real_pca = realpca.PCA(models)
 
 
 def debug(*x):
@@ -28,44 +28,30 @@ def set_brightnesses(request):
         scale,
         request_brightness_by_channel_id,
     ) = load_options(request)
-    return f(*options)
+    return set_default_brightness(*options)
 
 
-# TODO: rename stuff
-def f(default, only, relative, scale, request_brightness_by_channel_id):
-    milli_percents = {}
+def set_default_brightness(default, only, relative, scale, request_brightness_by_channel_id):
+    # like request_by..., but with default filled in
+    brightness_by_channel_id = {}
     for channel_id in models.CHANNEL_IDS:
-        milli_percent = request_brightness_by_channel_id.get(channel_id)
+        brightness = request_brightness_by_channel_id.get(channel_id)
         debug(f"channel_id={channel_id}")
-        debug(f"milli_percent={milli_percent}")
+        debug(f"brightness={brightness}")
 
-        key_missing = milli_percent is None
+        key_missing = brightness is None
         if key_missing and only:
             continue
-        value_missing = milli_percent == ""
+        value_missing = brightness == ""
         if key_missing or value_missing:
-            milli_percent = default
+            brightness = default
 
-        milli_percent = float(milli_percent)
-        try:
-            debug("set", channel_id, milli_percent)
-            channel = models.get_channel(channel_id)
-            milli_percents[channel_id] = milli_percent
-            if scale:
-                channel.milli_percent *= milli_percent  # TODO awkwardly not milli
-            elif relative:
-                channel.milli_percent += milli_percent
-            else:
-                channel.milli_percent = milli_percent
-            channel.save()
-        except Exception as e:
-            debug(e)
-            debug("skip", channel_id, milli_percent)
+        brightness = float(brightness)
+        brightness_by_channel_id[channel_id] = brightness
 
-    real_pca.set_brightnesses(milli_percents, relative=relative, scale=scale)
+    milli_percent_by_color_abbreviation = real_pca.set_brightnesses(brightness_by_channel_id, relative=relative, scale=scale)
 
-    # TODO: these values are wrong at least sometimes.
-    return HttpResponse(f"Setting channels: {models.get_brightnesses()}")
+    return HttpResponse(f"Setting channels: {milli_percent_by_color_abbreviation}")
 
 
 def warmer(request):
@@ -86,7 +72,7 @@ def warmer(request):
     brightness_by_channel_id = {
         k: get_warmer_factor(k, default) for k in models.CHANNEL_IDS
     }
-    return f(*options[:-1], brightness_by_channel_id)
+    return set_default_brightness(*options[:-1], brightness_by_channel_id)
 
 
 # TODO: dry
@@ -109,7 +95,7 @@ def cooler(request):
     brightness_by_channel_id = {
         k: 1 / get_warmer_factor(k, default) for k in models.CHANNEL_IDS
     }
-    return f(*options[:-1], brightness_by_channel_id)
+    return set_default_brightness(*options[:-1], brightness_by_channel_id)
 
 
 def get_warmer_factor(channel_id, factor):
