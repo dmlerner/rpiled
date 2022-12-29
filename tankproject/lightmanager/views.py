@@ -3,14 +3,19 @@ from lightmanager import models
 from lightmanager import realpca
 from lightmanager import requestparser
 
+import datetime
+
 DEBUG = False
 
 real_pca = realpca.PCA(models)
+import logging
+logger = logging.getLogger(__name__)
 
 
 def debug(*x):
     if DEBUG:
         print(*x)
+        logger.debug(*x)
 
 
 def index(request):
@@ -32,6 +37,7 @@ def set_brightnesses(request):
 
 
 def set_default_brightness(default, only, relative, scale, request_brightness_by_channel_id):
+    debug(datetime.datetime.now())
     # like request_by..., but with default filled in
     brightness_by_channel_id = {}
     for channel_id in models.CHANNEL_IDS:
@@ -50,8 +56,10 @@ def set_default_brightness(default, only, relative, scale, request_brightness_by
         brightness_by_channel_id[channel_id] = brightness
 
     milli_percent_by_color_abbreviation = real_pca.set_brightnesses(brightness_by_channel_id, relative=relative, scale=scale)
+    response_str = f"Setting channels: {milli_percent_by_color_abbreviation}"
+    debug(response_str)
 
-    return HttpResponse(f"Setting channels: {milli_percent_by_color_abbreviation}")
+    return HttpResponse(response_str)
 
 
 def warmer(request):
