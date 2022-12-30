@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 def debug(*x):
     if DEBUG:
         print(*x)
-        logger.debug(*x)
+        logger.info(*x)
 
 
 def index(request):
