@@ -42,7 +42,7 @@ class BasePCA:
 
         duty_cycle = bound_duty(int(duty_cycle))
         channel = self.models.get_channel(channel_id)
-        if not utils.close(duty_cycle, duty_cycle_before):
+        if not utils.close_rel(duty_cycle, duty_cycle_before):
             channels[channel_id].duty_cycle = duty_cycle
         # TODO: try except?
             channel.milli_percent = to_milli_percent(duty_cycle)
