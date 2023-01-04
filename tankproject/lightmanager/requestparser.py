@@ -1,5 +1,7 @@
 from django.http import HttpResponse
 
+DEBUG = True
+
 import logging
 logger = logging.getLogger(__name__)
 
