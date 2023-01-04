@@ -28,7 +28,8 @@ pca = build_pca()
 
 def index(request):
     template = loader.get_template('lightmanager/index.html')
-    context = { }
+    channel_ids = models.get_color_abbreviations()
+    context = { 'channel_ids': channel_ids }
     rendered = template.render(context, request)
     return HttpResponse(rendered)
 

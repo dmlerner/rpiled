@@ -22,6 +22,12 @@ class PWMChannel(models.Model):
             map(str, (self.color, self.color_abbreviation, round(self.milli_percent)))
         )
 
+def get_color_abbreviations():
+    ret = []
+    for channel_id in CHANNEL_IDS:
+        channel = get_channel(channel_id)
+        ret.append(channel.color_abbreviation)
+    return ret
 
 def get_color_map():
     color_map = {}

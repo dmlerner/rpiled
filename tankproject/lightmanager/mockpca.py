@@ -7,6 +7,7 @@ N_CHANNELS = 8
 
 @dataclass
 class MockChannel:
+    # start with a nonzero value to make scale more useful
     duty_cycle: int = 1
 
 class MockChannels(list):
