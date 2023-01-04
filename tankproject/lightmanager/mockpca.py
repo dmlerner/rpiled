@@ -7,18 +7,22 @@ N_CHANNELS = 8
 
 @dataclass
 class MockChannel:
-    duty_cycle: int = 0
+    duty_cycle: int = 1
 
+class MockChannels(list):
+    def get_channel(self, channel_id):
+        return self[channel_id]
 
 class MockPCA9685:
     def __init__(self, n=N_CHANNELS, frequency=pca.FREQUENCY):
-        self.channels = [MockChannel() for i in range(n)]
+        self.channels = MockChannels([MockChannel() for i in range(n)])
         self.frequency = frequency
 
 
 class MockPCA(pca.BasePCA):
-    def __init__(self):
-        self.hardware_pca = MockPCA9685()
+    def __init__(self, models):
+        self._pca = MockPCA9685()
+        self.models = models
 
 MILLI = 100 # TODO: change this to 1000?
 PERCENT = 100

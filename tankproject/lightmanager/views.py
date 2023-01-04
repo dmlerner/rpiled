@@ -1,25 +1,36 @@
 from django.http import HttpResponse
 from lightmanager import models
-from lightmanager import realpca
+from lightmanager import realpca, mockpca
 from lightmanager import requestparser
+from django.template import loader
+import os
 
 import datetime
 
-DEBUG = False
-
-real_pca = realpca.PCA(models)
 import logging
 logger = logging.getLogger(__name__)
 
+DEBUG = True
 
 def debug(*x):
     if DEBUG:
         print(*x)
         logger.info(*x)
 
+def build_pca():
+    if 'home/david' in os.getcwd():
+        debug("using mock pca")
+        return mockpca.MockPCA(models)
+    return realpca.PCA(models)
+
+pca = build_pca()
+
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    template = loader.get_template('lightmanager/index.html')
+    context = { }
+    rendered = template.render(context, request)
+    return HttpResponse(rendered)
 
 def load_options(request):
     return requestparser.load_options(request, models)
@@ -53,7 +64,7 @@ def set_default_brightness(default, only, relative, scale, request_brightness_by
         brightness = float(brightness)
         brightness_by_channel_id[channel_id] = brightness
 
-    milli_percent_by_color_abbreviation = real_pca.set_brightnesses(brightness_by_channel_id, relative=relative, scale=scale)
+    milli_percent_by_color_abbreviation = pca.set_brightnesses(brightness_by_channel_id, relative=relative, scale=scale)
     response_str = f"Setting channels: {milli_percent_by_color_abbreviation}"
     debug(response_str)
 
@@ -110,3 +121,4 @@ def get_warmer_factor(channel_id, factor):
     if models.is_cool(channel_id):
         return 1 / factor
     return 1
+

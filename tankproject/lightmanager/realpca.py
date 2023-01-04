@@ -4,13 +4,16 @@ from lightmanager import utils
 from lightmanager import pca
 
 imported = False
-DEBUG = False
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 def debug(*x):
     if DEBUG:
         print(*x)
-
+        logger.info(*x)
+DEBUG = True
 
 # TODO: move into a utils.Timer class or otherwise DRY
 def get_elapsed_time(show=True):
@@ -36,8 +39,9 @@ def import_all():
         import adafruit_pca9685
 
         imported = True
-    except Exception:
-        traceback.debug_exc()
+    except Exception as e:
+        traceback.print_exception(e)
+        raise
 
     return imported
 

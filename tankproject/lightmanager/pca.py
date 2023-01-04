@@ -9,11 +9,11 @@ FREQUENCY = 2441
 
 class BasePCA:
     def __init__(self, models):
-        self.hardware_pca = None
+        self._pca = None
         self.models = models
 
     def get_pca(self):
-        return self.hardware_pca
+        return self._pca
 
     def set_brightness(
         self, channel_id, milli_percent, relative=False, scale=False, channels=None
