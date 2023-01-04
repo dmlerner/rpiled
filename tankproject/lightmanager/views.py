@@ -42,8 +42,6 @@ def set_default_brightness(default, only, relative, scale, request_brightness_by
     brightness_by_channel_id = {}
     for channel_id in models.CHANNEL_IDS:
         brightness = request_brightness_by_channel_id.get(channel_id)
-        debug(f"channel_id={channel_id}")
-        debug(f"brightness={brightness}")
 
         key_missing = brightness is None
         if key_missing and only:
