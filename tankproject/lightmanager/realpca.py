@@ -60,9 +60,9 @@ def create_hardware_pca():
 
 class PCA(pca.BasePCA):
     def get_pca(self, frequency=None):
-        if self.hardware_pca:
-            debug("already initialized pca, returning", self.hardware_pca)
-            return self.hardware_pca
-        self.hardware_pca = create_hardware_pca()
-        return self.hardware_pca
+        if self._pca:
+            debug("already initialized pca, returning", self._pca)
+            return self._pca
+        self._pca = create_hardware_pca()
+        return self._pca
 
