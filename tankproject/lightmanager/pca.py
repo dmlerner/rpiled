@@ -44,8 +44,8 @@ class BasePCA:
 
         duty_cycle = bound_duty(int(duty_cycle))
         channel = self.models.get_channel(channel_id)
-        if not utils.close_rel(duty_cycle, duty_cycle_before):
-            channels[channel_id].duty_cycle = duty_cycle
+        update = not utils.close_rel(duty_cycle, duty_cycle_before)
+        if update:
         # TODO: try except?
             channel.milli_percent = to_milli_percent(duty_cycle)
             channel.save()
@@ -53,7 +53,7 @@ class BasePCA:
         get_elapsed_time()
         # assert before != after
 
-        return channel.color_abbreviation, channel.milli_percent
+        return channel.color_abbreviation, channel.milli_percent, update
 
 
     def set_brightnesses(self, milli_percents, relative=False, scale=False):
@@ -61,10 +61,18 @@ class BasePCA:
         channels = self.get_pca().channels
 
         milli_percent_by_color_abbreviation = {}
+        update_duty_cycle_by_cid = {}
 
         for cid, mp in milli_percents.items():
-            color_abbreviation, milli_percent = self.set_brightness(cid, mp, relative, scale, channels)
+            color_abbreviation, milli_percent, update = self.set_brightness(cid, mp, relative, scale, channels)
+            if update:
+                update_duty_cycle_by_cid[cid] = milli_percent
             milli_percent_by_color_abbreviation[color_abbreviation] = milli_percent
+
+        # set all at once in tight loop to make transition fast
+        # TODO: threads? is it even thread safe under the hood? different addresses, so hopefully...
+        for cid, mp in update_duty_cycle_by_cid.items():
+            channels[channel_id].duty_cycle = duty_cycle
 
         logger.log(milli_percent_by_color_abbreviation)
 

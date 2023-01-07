@@ -58,4 +58,3 @@ class PCA(pca.BasePCA):
             return self._pca
         self._pca = create_hardware_pca()
         return self._pca
-
