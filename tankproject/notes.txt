@@ -1,0 +1,3 @@
+amber does not turn on at all
+spot white turns on very slightly
+same behavior via alias f or django
