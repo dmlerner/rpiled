@@ -69,7 +69,7 @@ MIDNIGHT = datetime.datetime.combine(
 )
 
 
-def get_time_of_day_color_by_abbreviation():
+def get_time_of_day_color_by_abbreviation(models):
     abbreviations = models.get_color_abbreviations()
     now = datetime.datetime.now()
     t = now - MIDNIGHT

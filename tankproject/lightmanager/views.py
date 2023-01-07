@@ -54,7 +54,7 @@ def set_default_brightness(
     # like request_by..., but with default filled in
     brightness_by_channel_id = {}
     color_abbreviations = models.get_color_abbreviations()
-    color_by_abbreviation = requestparser.get_time_of_day_color_by_abbreviation()
+    color_by_abbreviation = requestparser.get_time_of_day_color_by_abbreviation(models)
     for channel_id in models.CHANNEL_IDS:
         if schedule:
             color_abbreviation = color_abbreviations.index(channel_id)
