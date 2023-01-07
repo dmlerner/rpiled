@@ -75,11 +75,11 @@ def get_time_of_day_color_by_abbreviation(models):
 
     sunrise = "sw r ww".split()
     if t < datetime.timedelta(hours=6, minutes=15):
-        return {abbr: 10*(abbr in sunrise) for abbr in abbreviations}
+        return {abbr: 10 * (abbr in sunrise) for abbr in abbreviations}
     if t < datetime.timedelta(hours=6, minutes=30):
-        return {abbr: 20*(abbr in sunrise) for abbr in abbreviations}
+        return {abbr: 20 * (abbr in sunrise) for abbr in abbreviations}
     if t < datetime.timedelta(hours=7):
-        return {abbr: 40*(abbr in sunrise) for abbr in abbreviations}
+        return {abbr: 40 * (abbr in sunrise) for abbr in abbreviations}
 
     cool_multipliers = {"g": 0.5, "ww": 0.5, "v": 2, "r": 2, "b": 2}
     proportion = (t - datetime.timedelta(hours=7)) / datetime.timedelta(hours=5)

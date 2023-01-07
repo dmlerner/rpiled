@@ -44,7 +44,9 @@ def verify(actual, expected, close=True):
         if isinstance(expected, dict):
             equal_keys = set(actual.keys()) == set(expected.keys())
             if equal_keys:
-                return verify([actual[k] for k in actual], [expected[k] for k in actual], close)
+                return verify(
+                    [actual[k] for k in actual], [expected[k] for k in actual], close
+                )
 
         if close:
             if all(utils.close_rel(a, e) for (a, e) in zip(actual, expected)):
@@ -123,7 +125,7 @@ class MyTestCase(TestCase):
 
     def test_abbreviations(self):
         abbreviations = models.get_color_abbreviations()
-        verify(abbreviations, ['v', 'r', 'g', 'a', 'sw', 'cw', 'ww', 'b'], False)
+        verify(abbreviations, ["v", "r", "g", "a", "sw", "cw", "ww", "b"], False)
 
     def test_schedule_dim_morning(self):
         requestparser.time_source = timesource.TimeSource(
@@ -133,8 +135,8 @@ class MyTestCase(TestCase):
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
         abbreviations = models.get_color_abbreviations()
-        expected = { abbr: 0 for abbr in abbreviations }
-        for abbr in 'r sw ww'.split():
+        expected = {abbr: 0 for abbr in abbreviations}
+        for abbr in "r sw ww".split():
             expected[abbr] = 40
 
         verify(color_by_abbr, expected, False)
@@ -147,7 +149,18 @@ class MyTestCase(TestCase):
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
         abbreviations = models.get_color_abbreviations()
-        expected = dict([('v', 9666.666666666666), ('r', 9666.666666666666), ('g', 2416.6666666666665), ('a', 4833.333333333333), ('sw', 4833.333333333333), ('cw', 4833.333333333333), ('ww', 2416.6666666666665), ('b', 9666.666666666666)])
+        expected = dict(
+            [
+                ("v", 9666.666666666666),
+                ("r", 9666.666666666666),
+                ("g", 2416.6666666666665),
+                ("a", 4833.333333333333),
+                ("sw", 4833.333333333333),
+                ("cw", 4833.333333333333),
+                ("ww", 2416.6666666666665),
+                ("b", 9666.666666666666),
+            ]
+        )
         # expected = {k: v*2 for (k, v) in expected.items()}
 
         verify(color_by_abbr, expected, True)
@@ -160,12 +173,21 @@ class MyTestCase(TestCase):
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
         abbreviations = models.get_color_abbreviations()
-        expected = dict([('v', 6000.000000000001), ('r', 6000.000000000001), ('g', 1500.0000000000002), ('a', 3000.0000000000005), ('sw', 3000.0000000000005), ('cw', 3000.0000000000005), ('ww', 1500.0000000000002), ('b', 6000.000000000001)])
+        expected = dict(
+            [
+                ("v", 6000.000000000001),
+                ("r", 6000.000000000001),
+                ("g", 1500.0000000000002),
+                ("a", 3000.0000000000005),
+                ("sw", 3000.0000000000005),
+                ("cw", 3000.0000000000005),
+                ("ww", 1500.0000000000002),
+                ("b", 6000.000000000001),
+            ]
+        )
         # expected = {k: v*2 for (k, v) in expected.items()}
 
         verify(color_by_abbr, expected, True)
-
-
 
 
 def test_relative():
