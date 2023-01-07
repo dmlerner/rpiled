@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from lightmanager import models
 from lightmanager import realpca, mockpca
 from lightmanager import requestparser

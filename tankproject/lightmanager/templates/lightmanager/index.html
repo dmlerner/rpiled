@@ -1,12 +1,17 @@
 all
-<a href="/lightmanager/sbs/?scale&default=1.2"> +  </a>&nbsp
-<a href="/lightmanager/sbs/?scale&default=.8"> -  </a>&nbsp
+<a href="/lightmanager/sbs/?scale&default=2&only"> x2  </a>&nbsp
+<a href="/lightmanager/sbs/?scale&default=1.26&only"> x1.26  </a>&nbsp
+<a href="/lightmanager/sbs/?scale&default=.7937&only"> /1.26  </a>
+<a href="/lightmanager/sbs/?scale&default=.5&only"> /2 </a>
 <p>
 
 {% for channel_id in channel_ids %}
   {{ channel_id }}
-  <a href="/lightmanager/sbs/?scale&{{ channel_id }}&default=1.2&only"> +  </a>&nbsp
-  <a href="/lightmanager/sbs/?scale&{{ channel_id }}&default=.8&only"> -  </a>
+  <a href="/lightmanager/sbs/?scale&{{ channel_id }}&default=2&only"> x2  </a>&nbsp
+  <a href="/lightmanager/sbs/?scale&{{ channel_id }}&default=1.26&only"> x1.26  </a>&nbsp
+  <a href="/lightmanager/sbs/?scale&{{ channel_id }}&default=.7937&only"> /1.26  </a>
+  <a href="/lightmanager/sbs/?scale&{{ channel_id }}&default=.5&only"> /2 </a>
   <p>
 
 {% endfor %}
+
