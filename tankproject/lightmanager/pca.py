@@ -2,7 +2,9 @@ import time
 import traceback
 from lightmanager import utils
 
-DEBUG = False
+from lightmanager import mylogger
+logger = mylogger.Logger()
+
 MAX_DUTY_CYCLE = 2**16 - 1
 FREQUENCY = 2441
 
@@ -19,7 +21,7 @@ class BasePCA:
         self, channel_id, milli_percent, relative=False, scale=False, channels=None
     ):
         duty_cycle = to_duty_cycle(milli_percent)
-        debug(
+        logger.log(
             "channel_id, mp, dc, relative, scale, channels",
             channel_id,
             milli_percent,
@@ -55,7 +57,7 @@ class BasePCA:
 
 
     def set_brightnesses(self, milli_percents, relative=False, scale=False):
-        debug("set_brightnesses", milli_percents)
+        logger.log("set_brightnesses", milli_percents)
         channels = self.get_pca().channels
 
         milli_percent_by_color_abbreviation = {}
@@ -64,7 +66,7 @@ class BasePCA:
             color_abbreviation, milli_percent = self.set_brightness(cid, mp, relative, scale, channels)
             milli_percent_by_color_abbreviation[color_abbreviation] = milli_percent
 
-        debug(milli_percent_by_color_abbreviation)
+        logger.log(milli_percent_by_color_abbreviation)
 
         return milli_percent_by_color_abbreviation
 
@@ -72,17 +74,12 @@ class BasePCA:
         return [channel.duty_cycle for channel in self.get_pca().channels]
 
 
-def debug(*x):
-    if DEBUG:
-        print(*x)
-
-
 def get_elapsed_time(show=True):
     now = time.time()
     delta = now - get_elapsed_time.t
     get_elapsed_time.t = now
     if show:
-        debug("elapsed time: ", delta)
+        logger.log("elapsed time: ", delta)
     return delta
 
 
@@ -99,7 +96,7 @@ MILLI = 100  # TODO RENAME
 def to_duty_cycle(milli_percent):
     proportion = float(milli_percent) / 100 / MILLI
     raw_duty_cycle = proportion * MAX_DUTY_CYCLE
-    debug("rdc, prop", raw_duty_cycle, proportion)
+    logger.log("rdc, prop", raw_duty_cycle, proportion)
     return raw_duty_cycle
 
 

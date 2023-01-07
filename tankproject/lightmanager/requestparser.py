@@ -1,15 +1,8 @@
 from django.http import HttpResponse
 
-DEBUG = True
 
-import logging
-logger = logging.getLogger(__name__)
-
-
-def debug(*x):
-    if DEBUG:
-        print(*x)
-        logger.info(*x)
+from lightmanager import mylogger
+logger = mylogger.Logger()
 
 def get_only(request):
     return get_default_false(request, "only")
@@ -37,11 +30,11 @@ def load_options(request, models):
         channel_id: get_request_brightness(request, channel_id, models)
         for channel_id in models.CHANNEL_IDS
     }
-    debug(f'{default=}')
-    debug(f'{only=}')
-    debug(f'{relative=}')
-    debug(f'{scale=}')
-    debug(f'{request_brightness_by_channel_id=}')
+    logger.log(f'{default=}')
+    logger.log(f'{only=}')
+    logger.log(f'{relative=}')
+    logger.log(f'{scale=}')
+    logger.log(f'{request_brightness_by_channel_id=}')
     return default, only, relative, scale, request_brightness_by_channel_id
 
 

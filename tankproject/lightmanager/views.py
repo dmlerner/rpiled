@@ -7,19 +7,13 @@ import os
 
 import datetime
 
-import logging
-logger = logging.getLogger(__name__)
+from lightmanager import mylogger
+logger = mylogger.Logger()
 
-DEBUG = True
-
-def debug(*x):
-    if DEBUG:
-        print(*x)
-        logger.info(*x)
 
 def build_pca():
     if 'home/david' in os.getcwd():
-        debug("using mock pca")
+        logger.log("using mock pca")
         return mockpca.MockPCA(models)
     return realpca.PCA(models)
 
@@ -49,7 +43,7 @@ def set_brightnesses(request):
 
 
 def set_default_brightness(default, only, relative, scale, request_brightness_by_channel_id):
-    debug(datetime.datetime.now())
+    logger.log(datetime.datetime.now())
     # like request_by..., but with default filled in
     brightness_by_channel_id = {}
     for channel_id in models.CHANNEL_IDS:
@@ -67,7 +61,7 @@ def set_default_brightness(default, only, relative, scale, request_brightness_by
 
     milli_percent_by_color_abbreviation = pca.set_brightnesses(brightness_by_channel_id, relative=relative, scale=scale)
     response_str = f"Setting channels: {milli_percent_by_color_abbreviation}"
-    debug(response_str)
+    logger.log(response_str)
 
     return HttpResponse(response_str)
 
