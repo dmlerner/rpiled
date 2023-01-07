@@ -38,16 +38,23 @@ def set_brightnesses(request):
         relative,
         scale,
         request_brightness_by_channel_id,
+        schedule,
     ) = load_options(request)
     return set_default_brightness(*options)
 
 
-def set_default_brightness(default, only, relative, scale, request_brightness_by_channel_id):
+def set_default_brightness(default, only, relative, scale, request_brightness_by_channel_id, schedule):
     logger.log(datetime.datetime.now())
     # like request_by..., but with default filled in
     brightness_by_channel_id = {}
+    color_abbreviations = models.get_color_abbreviations()
+    color_by_abbreviation = requestparser.get_time_of_day_color_by_abbreviation()
     for channel_id in models.CHANNEL_IDS:
-        brightness = request_brightness_by_channel_id.get(channel_id)
+        if schedule:
+            color_abbreviation = color_abbreviations.index(channel_id)
+            brightness = color_by_abbreviation.get(color_abbreviation, 0)
+        else:
+            brightness = request_brightness_by_channel_id.get(channel_id)
 
         key_missing = brightness is None
         if key_missing and only:
@@ -73,10 +80,12 @@ def warmer(request):
         relative,
         scale,
         request_brightness_by_channel_id,
+        schedule,
     ) = load_options(request)
-    # ignore request_brightness_by_channel_id
+    # ignore request_brightness_by_channel_id, schedule
     # TODO: support relative and overrides and such.
     # will require factoring out more of `f`
+    # TODO: pause schedule or something if manual used
     assert default
     default = float(default)
     warm_brightness = default
@@ -108,6 +117,7 @@ def cooler(request):
         k: 1 / get_warmer_factor(k, default) for k in models.CHANNEL_IDS
     }
     return set_default_brightness(*options[:-1], brightness_by_channel_id)
+
 
 
 def get_warmer_factor(channel_id, factor):
