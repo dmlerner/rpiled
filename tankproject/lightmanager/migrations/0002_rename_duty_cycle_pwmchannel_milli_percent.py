@@ -6,13 +6,13 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('lightmanager', '0001_initial'),
+        ("lightmanager", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='pwmchannel',
-            old_name='duty_cycle',
-            new_name='milli_percent',
+            model_name="pwmchannel",
+            old_name="duty_cycle",
+            new_name="milli_percent",
         ),
     ]

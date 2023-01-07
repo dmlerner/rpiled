@@ -6,6 +6,7 @@ from lightmanager import pca
 imported = False
 
 from lightmanager import mylogger
+
 logger = mylogger.Logger()
 
 # TODO: move into a utils.Timer class or otherwise DRY
