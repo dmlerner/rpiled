@@ -84,7 +84,7 @@ def get_time_of_day_color_by_abbreviation(models):
     if t < datetime.timedelta(hours=7):
         return {abbr: 40 for abbr in sunrise}
 
-    cool_multipliers = {"g": 0.5, "ww": 0.5, v: 2, r: 2, b: 2}
+    cool_multipliers = {"g": 0.5, "ww": 0.5, 'v': 2, 'r': 2, 'b': 2}
     proportion = t / datetime.timedelta(hours=5)
     max_brightness = 10000 / max(cool_multipliers.values())
     baseline = proportion * max_brightness
@@ -96,7 +96,7 @@ def get_time_of_day_color_by_abbreviation(models):
     proportion = 2 - proportion
     baseline = proportion * max_brightness
     min_brightness = 40
-    # warm_multipliers = { 'g': .5, 'ww': .5, v: 2, r: 2, b: 2 }
+    #warm_multipliers = {"g": 0.5, "ww": 0.5, 'v': 2, 'r': 2, 'b': 2}
     if t < datetime.timedelta(hours=21):
         # at 17 it hits min
         return {
