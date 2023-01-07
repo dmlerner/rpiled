@@ -8,6 +8,14 @@ logger = mylogger.Logger()
 MAX_DUTY_CYCLE = 2**16 - 1
 FREQUENCY = 2441
 
+def normalize(duty_cycle_before, duty_cycle):
+    duty_cycle = bound_duty(round(duty_cycle))
+    if duty_cycle>>4 == duty_cycle_before>>4:
+        if duty_cycle > duty_cycle_before:
+            return (duty_cycle_before>>4+1)<<4
+        else duty_cycle < duty_cycle_before:
+            return (duty_cycle_before>>4-1)<<4
+    return duty_cycle
 
 class BasePCA:
     def __init__(self, models):
@@ -43,9 +51,10 @@ class BasePCA:
         if scale:
             duty_cycle = duty_cycle_before * milli_percent
 
-        duty_cycle = bound_duty(int(duty_cycle))
+        duty_cycle = normalize(before, after)
+        update = duty_cycle == duty_cycle_before
+
         channel = self.models.get_channel(channel_id)
-        update = not utils.close_rel(duty_cycle, duty_cycle_before)
         logger.log('!', duty_cycle, duty_cycle_before, update)
         if update:
         # TODO: try except?
