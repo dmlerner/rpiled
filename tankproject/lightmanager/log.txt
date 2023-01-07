@@ -1,0 +1,332 @@
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+[2023-01-07 17:44:51.005861] | default='1.1'
+[2023-01-07 17:44:51.008992] | only=False
+[2023-01-07 17:44:51.011572] | relative=False
+[2023-01-07 17:44:51.014175] | scale=True
+[2023-01-07 17:44:51.016823] | request_brightness_by_channel_id={0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None}
+[2023-01-07 17:44:51.019353] | 2023-01-07 17:44:51.018995
+[2023-01-07 17:44:51.022822] | set_brightnesses | {0: 1.1, 1: 1.1, 2: 1.1, 3: 1.1, 4: 1.1, 5: 1.1, 6: 1.1, 7: 1.1}
+[2023-01-07 17:44:52.982407] | made new pca, returning:  | <adafruit_pca9685.PCA9685 object at 0xb3a7fe10>
+[2023-01-07 17:44:52.984825] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:44:52.986952] | channel_id, mp, dc, relative, scale, channels | 0 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a560b0>
+[2023-01-07 17:44:53.572662] | elapsed time:  | 57.38323903083801
+[2023-01-07 17:44:53.575004] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:44:53.576965] | channel_id, mp, dc, relative, scale, channels | 1 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a560b0>
+[2023-01-07 17:44:53.753074] | elapsed time:  | 0.18042516708374023
+[2023-01-07 17:44:53.755388] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:44:53.757655] | channel_id, mp, dc, relative, scale, channels | 2 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a560b0>
+[2023-01-07 17:44:53.995624] | elapsed time:  | 0.24244952201843262
+[2023-01-07 17:44:53.997993] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:44:54.000110] | channel_id, mp, dc, relative, scale, channels | 3 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a560b0>
+[2023-01-07 17:44:54.089787] | elapsed time:  | 0.09426379203796387
+[2023-01-07 17:44:54.092410] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:44:54.094513] | channel_id, mp, dc, relative, scale, channels | 4 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a560b0>
+[2023-01-07 17:44:54.167391] | elapsed time:  | 0.07759714126586914
+[2023-01-07 17:44:54.169698] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:44:54.172134] | channel_id, mp, dc, relative, scale, channels | 5 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a560b0>
+[2023-01-07 17:44:54.243847] | elapsed time:  | 0.07635331153869629
+[2023-01-07 17:44:54.246001] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:44:54.248104] | channel_id, mp, dc, relative, scale, channels | 6 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a560b0>
+[2023-01-07 17:44:54.326740] | elapsed time:  | 0.08299827575683594
+[2023-01-07 17:44:54.329674] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:44:54.332104] | channel_id, mp, dc, relative, scale, channels | 7 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a560b0>
+[2023-01-07 17:44:54.407646] | elapsed time:  | 0.08090329170227051
+Internal Server Error: /lightmanager/sbs/
+Traceback (most recent call last):
+  File "/home/pi/.local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/.local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/views.py", line 42, in set_brightnesses
+    return set_default_brightness(*options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/views.py", line 62, in set_default_brightness
+    milli_percent_by_color_abbreviation = pca.set_brightnesses(brightness_by_channel_id, relative=relative, scale=scale)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/pca.py", line 75, in set_brightnesses
+    channels[channel_id].duty_cycle = duty_cycle
+                                      ^^^^^^^^^^
+NameError: name 'duty_cycle' is not defined
+Internal Server Error: /lightmanager/sbs/
+Traceback (most recent call last):
+  File "/home/pi/.local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/.local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/views.py", line 42, in set_brightnesses
+    return set_default_brightness(*options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/views.py", line 62, in set_default_brightness
+    milli_percent_by_color_abbreviation = pca.set_brightnesses(brightness_by_channel_id, relative=relative, scale=scale)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/pca.py", line 75, in set_brightnesses
+    channels[channel_id].duty_cycle = duty_cycle
+                                      ^^^^^^^^^^
+NameError: name 'duty_cycle' is not defined
+"GET /lightmanager/sbs/?scale&default=1.1 HTTP/1.1" 500 80987
+"GET /lightmanager/sbs/?scale&default=1.1 HTTP/1.1" 500 80987
+/home/pi/tank/tank2/rpiled/tankproject/lightmanager/pca.py changed, reloading.
+/home/pi/tank/tank2/rpiled/tankproject/lightmanager/pca.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+[2023-01-07 17:46:15.646177] | default='1.1'
+[2023-01-07 17:46:15.649286] | only=False
+[2023-01-07 17:46:15.652238] | relative=False
+[2023-01-07 17:46:15.654729] | scale=True
+[2023-01-07 17:46:15.657380] | request_brightness_by_channel_id={0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None}
+[2023-01-07 17:46:15.660068] | 2023-01-07 17:46:15.659708
+[2023-01-07 17:46:15.663348] | set_brightnesses | {0: 1.1, 1: 1.1, 2: 1.1, 3: 1.1, 4: 1.1, 5: 1.1, 6: 1.1, 7: 1.1}
+[2023-01-07 17:46:16.912343] | made new pca, returning:  | <adafruit_pca9685.PCA9685 object at 0xb38cbd50>
+[2023-01-07 17:46:16.914909] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:46:16.917035] | channel_id, mp, dc, relative, scale, channels | 0 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3882fb0>
+[2023-01-07 17:46:18.064160] | elapsed time:  | 20.175118446350098
+[2023-01-07 17:46:18.066646] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:46:18.068769] | channel_id, mp, dc, relative, scale, channels | 1 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3882fb0>
+[2023-01-07 17:46:18.342974] | elapsed time:  | 0.278841495513916
+[2023-01-07 17:46:18.345178] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:46:18.347445] | channel_id, mp, dc, relative, scale, channels | 2 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3882fb0>
+[2023-01-07 17:46:18.559328] | elapsed time:  | 0.21631836891174316
+[2023-01-07 17:46:18.562192] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:46:18.564373] | channel_id, mp, dc, relative, scale, channels | 3 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3882fb0>
+[2023-01-07 17:46:18.814850] | elapsed time:  | 0.2555370330810547
+[2023-01-07 17:46:18.817161] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:46:18.819417] | channel_id, mp, dc, relative, scale, channels | 4 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3882fb0>
+[2023-01-07 17:46:18.893153] | elapsed time:  | 0.07829833030700684
+[2023-01-07 17:46:18.895473] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:46:18.897572] | channel_id, mp, dc, relative, scale, channels | 5 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3882fb0>
+[2023-01-07 17:46:19.000029] | elapsed time:  | 0.10688185691833496
+[2023-01-07 17:46:19.003867] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:46:19.005981] | channel_id, mp, dc, relative, scale, channels | 6 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3882fb0>
+[2023-01-07 17:46:19.088006] | elapsed time:  | 0.08797645568847656
+[2023-01-07 17:46:19.090494] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:46:19.094042] | channel_id, mp, dc, relative, scale, channels | 7 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3882fb0>
+[2023-01-07 17:46:19.173150] | elapsed time:  | 0.0851280689239502
+Internal Server Error: /lightmanager/sbs/
+Traceback (most recent call last):
+  File "/home/pi/.local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/.local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/views.py", line 42, in set_brightnesses
+    return set_default_brightness(*options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/views.py", line 62, in set_default_brightness
+    milli_percent_by_color_abbreviation = pca.set_brightnesses(brightness_by_channel_id, relative=relative, scale=scale)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/pca.py", line 75, in set_brightnesses
+    channels[channel_id].duty_cycle = duty_cycle
+             ^^^^^^^^^^
+NameError: name 'channel_id' is not defined
+Internal Server Error: /lightmanager/sbs/
+Traceback (most recent call last):
+  File "/home/pi/.local/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/.local/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/views.py", line 42, in set_brightnesses
+    return set_default_brightness(*options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/views.py", line 62, in set_default_brightness
+    milli_percent_by_color_abbreviation = pca.set_brightnesses(brightness_by_channel_id, relative=relative, scale=scale)
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/tank/tank2/rpiled/tankproject/lightmanager/pca.py", line 75, in set_brightnesses
+    channels[channel_id].duty_cycle = duty_cycle
+             ^^^^^^^^^^
+NameError: name 'channel_id' is not defined
+"GET /lightmanager/sbs/?scale&default=1.1 HTTP/1.1" 500 81156
+"GET /lightmanager/sbs/?scale&default=1.1 HTTP/1.1" 500 81156
+/home/pi/tank/tank2/rpiled/tankproject/lightmanager/pca.py changed, reloading.
+/home/pi/tank/tank2/rpiled/tankproject/lightmanager/pca.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
+[2023-01-07 17:47:00.530549] | default='1.1'
+[2023-01-07 17:47:00.535408] | only=False
+[2023-01-07 17:47:00.663232] | relative=False
+[2023-01-07 17:47:00.665930] | scale=True
+[2023-01-07 17:47:00.668532] | request_brightness_by_channel_id={0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None}
+[2023-01-07 17:47:00.672489] | 2023-01-07 17:47:00.672110
+[2023-01-07 17:47:00.675399] | set_brightnesses | {0: 1.1, 1: 1.1, 2: 1.1, 3: 1.1, 4: 1.1, 5: 1.1, 6: 1.1, 7: 1.1}
+[2023-01-07 17:47:02.477426] | made new pca, returning:  | <adafruit_pca9685.PCA9685 object at 0xb42cdc30>
+[2023-01-07 17:47:02.479854] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:47:02.483430] | channel_id, mp, dc, relative, scale, channels | 0 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:03.036946] | elapsed time:  | 14.718038320541382
+[2023-01-07 17:47:03.039296] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:47:03.042665] | channel_id, mp, dc, relative, scale, channels | 1 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:03.504334] | elapsed time:  | 0.4673938751220703
+[2023-01-07 17:47:03.506804] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:47:03.508776] | channel_id, mp, dc, relative, scale, channels | 2 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:03.864767] | elapsed time:  | 0.3599100112915039
+[2023-01-07 17:47:03.867638] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:47:03.869781] | channel_id, mp, dc, relative, scale, channels | 3 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:04.213444] | elapsed time:  | 0.3491952419281006
+[2023-01-07 17:47:04.215770] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:47:04.218026] | channel_id, mp, dc, relative, scale, channels | 4 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:04.660083] | elapsed time:  | 0.44664525985717773
+[2023-01-07 17:47:04.662840] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:47:04.664970] | channel_id, mp, dc, relative, scale, channels | 5 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:04.880245] | elapsed time:  | 0.22015690803527832
+[2023-01-07 17:47:04.883117] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:47:04.885257] | channel_id, mp, dc, relative, scale, channels | 6 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:05.133764] | elapsed time:  | 0.253521203994751
+[2023-01-07 17:47:05.136151] | rdc, prop | 7.208850000000001 | 0.00011000000000000002
+[2023-01-07 17:47:05.138427] | channel_id, mp, dc, relative, scale, channels | 7 | 1.1 | 7.208850000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:05.225127] | elapsed time:  | 0.09135222434997559
+[2023-01-07 17:47:05.240453] | {'v': 161, 'r': 156, 'g': 156, 'a': 156, 'sw': 156, 'cw': 156, 'ww': 156, 'b': 156}
+[2023-01-07 17:47:05.244128] | Setting channels: {'v': 161, 'r': 156, 'g': 156, 'a': 156, 'sw': 156, 'cw': 156, 'ww': 156, 'b': 156}
+"GET /lightmanager/sbs/?scale&default=1.1 HTTP/1.1" 200 101
+"GET /lightmanager/sbs/?scale&default=1.1 HTTP/1.1" 200 101
+[2023-01-07 17:47:35.697560] | default='2'
+[2023-01-07 17:47:35.699728] | only=False
+[2023-01-07 17:47:35.707150] | relative=False
+[2023-01-07 17:47:35.709001] | scale=True
+[2023-01-07 17:47:35.713215] | request_brightness_by_channel_id={0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None}
+[2023-01-07 17:47:35.715597] | 2023-01-07 17:47:35.715275
+[2023-01-07 17:47:35.717878] | set_brightnesses | {0: 2.0, 1: 2.0, 2: 2.0, 3: 2.0, 4: 2.0, 5: 2.0, 6: 2.0, 7: 2.0}
+[2023-01-07 17:47:35.720093] | already initialized pca, returning | <adafruit_pca9685.PCA9685 object at 0xb42cdc30>
+[2023-01-07 17:47:35.723684] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:35.725770] | channel_id, mp, dc, relative, scale, channels | 0 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:36.128814] | elapsed time:  | 30.903577089309692
+[2023-01-07 17:47:36.132509] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:36.134664] | channel_id, mp, dc, relative, scale, channels | 1 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:36.225703] | elapsed time:  | 0.09699797630310059
+[2023-01-07 17:47:36.227983] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:36.230070] | channel_id, mp, dc, relative, scale, channels | 2 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:36.309516] | elapsed time:  | 0.0838475227355957
+[2023-01-07 17:47:36.313285] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:36.315408] | channel_id, mp, dc, relative, scale, channels | 3 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:36.414245] | elapsed time:  | 0.1047050952911377
+[2023-01-07 17:47:36.416512] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:36.418745] | channel_id, mp, dc, relative, scale, channels | 4 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:36.708907] | elapsed time:  | 0.29468631744384766
+[2023-01-07 17:47:36.712478] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:36.714756] | channel_id, mp, dc, relative, scale, channels | 5 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:36.800195] | elapsed time:  | 0.09126138687133789
+[2023-01-07 17:47:36.803969] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:36.806025] | channel_id, mp, dc, relative, scale, channels | 6 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:36.886607] | elapsed time:  | 0.08641743659973145
+[2023-01-07 17:47:36.889367] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:36.892876] | channel_id, mp, dc, relative, scale, channels | 7 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:36.970633] | elapsed time:  | 0.0840306282043457
+[2023-01-07 17:47:36.994953] | {'v': 49, 'r': 44, 'g': 44, 'a': 44, 'sw': 44, 'cw': 44, 'ww': 44, 'b': 44}
+[2023-01-07 17:47:36.997365] | Setting channels: {'v': 49, 'r': 44, 'g': 44, 'a': 44, 'sw': 44, 'cw': 44, 'ww': 44, 'b': 44}
+"GET /lightmanager/sbs/?scale&default=2 HTTP/1.1" 200 93
+"GET /lightmanager/sbs/?scale&default=2 HTTP/1.1" 200 93
+[2023-01-07 17:47:45.256040] | default='200'
+[2023-01-07 17:47:45.258322] | only=False
+[2023-01-07 17:47:45.260300] | relative=False
+[2023-01-07 17:47:45.262653] | scale=True
+[2023-01-07 17:47:45.264878] | request_brightness_by_channel_id={0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None}
+[2023-01-07 17:47:45.267034] | 2023-01-07 17:47:45.266718
+[2023-01-07 17:47:45.269254] | set_brightnesses | {0: 200.0, 1: 200.0, 2: 200.0, 3: 200.0, 4: 200.0, 5: 200.0, 6: 200.0, 7: 200.0}
+[2023-01-07 17:47:45.271762] | already initialized pca, returning | <adafruit_pca9685.PCA9685 object at 0xb42cdc30>
+[2023-01-07 17:47:45.273858] | rdc, prop | 1310.7 | 0.02
+[2023-01-07 17:47:45.275756] | channel_id, mp, dc, relative, scale, channels | 0 | 200.0 | 1310.7 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:45.362664] | elapsed time:  | 8.392028093338013
+[2023-01-07 17:47:45.365060] | rdc, prop | 1310.7 | 0.02
+[2023-01-07 17:47:45.367119] | channel_id, mp, dc, relative, scale, channels | 1 | 200.0 | 1310.7 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:45.439666] | elapsed time:  | 0.07700252532958984
+[2023-01-07 17:47:45.441994] | rdc, prop | 1310.7 | 0.02
+[2023-01-07 17:47:45.444277] | channel_id, mp, dc, relative, scale, channels | 2 | 200.0 | 1310.7 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:45.536463] | elapsed time:  | 0.09679031372070312
+[2023-01-07 17:47:45.538837] | rdc, prop | 1310.7 | 0.02
+[2023-01-07 17:47:45.541655] | channel_id, mp, dc, relative, scale, channels | 3 | 200.0 | 1310.7 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:45.783109] | elapsed time:  | 0.24665546417236328
+[2023-01-07 17:47:45.785496] | rdc, prop | 1310.7 | 0.02
+[2023-01-07 17:47:45.787609] | channel_id, mp, dc, relative, scale, channels | 4 | 200.0 | 1310.7 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:45.909638] | elapsed time:  | 0.12653350830078125
+[2023-01-07 17:47:45.912434] | rdc, prop | 1310.7 | 0.02
+[2023-01-07 17:47:45.914652] | channel_id, mp, dc, relative, scale, channels | 5 | 200.0 | 1310.7 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:45.995738] | elapsed time:  | 0.08595061302185059
+[2023-01-07 17:47:45.998032] | rdc, prop | 1310.7 | 0.02
+[2023-01-07 17:47:46.000075] | channel_id, mp, dc, relative, scale, channels | 6 | 200.0 | 1310.7 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:46.085775] | elapsed time:  | 0.09018230438232422
+[2023-01-07 17:47:46.088042] | rdc, prop | 1310.7 | 0.02
+[2023-01-07 17:47:46.090246] | channel_id, mp, dc, relative, scale, channels | 7 | 200.0 | 1310.7 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:46.174175] | elapsed time:  | 0.08842134475708008
+[2023-01-07 17:47:46.188726] | {'v': 1465, 'r': 977, 'g': 977, 'a': 977, 'sw': 977, 'cw': 977, 'ww': 977, 'b': 977}
+[2023-01-07 17:47:46.192584] | Setting channels: {'v': 1465, 'r': 977, 'g': 977, 'a': 977, 'sw': 977, 'cw': 977, 'ww': 977, 'b': 977}
+"GET /lightmanager/sbs/?scale&default=200 HTTP/1.1" 200 102
+"GET /lightmanager/sbs/?scale&default=200 HTTP/1.1" 200 102
+[2023-01-07 17:47:51.807084] | default='2'
+[2023-01-07 17:47:51.819149] | only=False
+[2023-01-07 17:47:51.822503] | relative=False
+[2023-01-07 17:47:51.825260] | scale=True
+[2023-01-07 17:47:51.827379] | request_brightness_by_channel_id={0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None}
+[2023-01-07 17:47:51.829505] | 2023-01-07 17:47:51.829193
+[2023-01-07 17:47:51.833421] | set_brightnesses | {0: 2.0, 1: 2.0, 2: 2.0, 3: 2.0, 4: 2.0, 5: 2.0, 6: 2.0, 7: 2.0}
+[2023-01-07 17:47:51.835640] | already initialized pca, returning | <adafruit_pca9685.PCA9685 object at 0xb42cdc30>
+[2023-01-07 17:47:51.837700] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:51.839651] | channel_id, mp, dc, relative, scale, channels | 0 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:52.053565] | elapsed time:  | 5.879356622695923
+[2023-01-07 17:47:52.055834] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:52.058051] | channel_id, mp, dc, relative, scale, channels | 1 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:52.228292] | elapsed time:  | 0.1747279167175293
+[2023-01-07 17:47:52.230542] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:52.234325] | channel_id, mp, dc, relative, scale, channels | 2 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:52.316681] | elapsed time:  | 0.0883634090423584
+[2023-01-07 17:47:52.318950] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:52.322477] | channel_id, mp, dc, relative, scale, channels | 3 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:52.396418] | elapsed time:  | 0.07975959777832031
+[2023-01-07 17:47:52.398657] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:52.402565] | channel_id, mp, dc, relative, scale, channels | 4 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:52.475002] | elapsed time:  | 0.07860660552978516
+[2023-01-07 17:47:52.477200] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:52.479243] | channel_id, mp, dc, relative, scale, channels | 5 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:52.553948] | elapsed time:  | 0.07893133163452148
+[2023-01-07 17:47:52.556223] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:52.558277] | channel_id, mp, dc, relative, scale, channels | 6 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:52.629370] | elapsed time:  | 0.07542777061462402
+[2023-01-07 17:47:52.631799] | rdc, prop | 13.107000000000001 | 0.0002
+[2023-01-07 17:47:52.634017] | channel_id, mp, dc, relative, scale, channels | 7 | 2.0 | 13.107000000000001 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:47:52.714038] | elapsed time:  | 0.08466553688049316
+[2023-01-07 17:47:52.727260] | {'v': 444, 'r': 298, 'g': 298, 'a': 298, 'sw': 298, 'cw': 298, 'ww': 298, 'b': 298}
+[2023-01-07 17:47:52.729801] | Setting channels: {'v': 444, 'r': 298, 'g': 298, 'a': 298, 'sw': 298, 'cw': 298, 'ww': 298, 'b': 298}
+"GET /lightmanager/sbs/?scale&default=2&scale HTTP/1.1" 200 101
+"GET /lightmanager/sbs/?scale&default=2&scale HTTP/1.1" 200 101
+[2023-01-07 17:48:02.893644] | default='1.033657'
+[2023-01-07 17:48:02.904740] | only=False
+[2023-01-07 17:48:02.907286] | relative=False
+[2023-01-07 17:48:02.909113] | scale=True
+[2023-01-07 17:48:02.911366] | request_brightness_by_channel_id={0: None, 1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None}
+[2023-01-07 17:48:02.913674] | 2023-01-07 17:48:02.913359
+[2023-01-07 17:48:02.915879] | set_brightnesses | {0: 1.033657, 1: 1.033657, 2: 1.033657, 3: 1.033657, 4: 1.033657, 5: 1.033657, 6: 1.033657, 7: 1.033657}
+[2023-01-07 17:48:02.918155] | already initialized pca, returning | <adafruit_pca9685.PCA9685 object at 0xb42cdc30>
+[2023-01-07 17:48:02.920202] | rdc, prop | 6.774071149499999 | 0.00010336569999999999
+[2023-01-07 17:48:02.922559] | channel_id, mp, dc, relative, scale, channels | 0 | 1.033657 | 6.774071149499999 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:48:03.032412] | elapsed time:  | 10.318235635757446
+[2023-01-07 17:48:03.034679] | rdc, prop | 6.774071149499999 | 0.00010336569999999999
+[2023-01-07 17:48:03.036738] | channel_id, mp, dc, relative, scale, channels | 1 | 1.033657 | 6.774071149499999 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:48:03.113315] | elapsed time:  | 0.08103466033935547
+[2023-01-07 17:48:03.115548] | rdc, prop | 6.774071149499999 | 0.00010336569999999999
+[2023-01-07 17:48:03.117600] | channel_id, mp, dc, relative, scale, channels | 2 | 1.033657 | 6.774071149499999 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:48:03.206115] | elapsed time:  | 0.09282445907592773
+[2023-01-07 17:48:03.208164] | rdc, prop | 6.774071149499999 | 0.00010336569999999999
+[2023-01-07 17:48:03.210499] | channel_id, mp, dc, relative, scale, channels | 3 | 1.033657 | 6.774071149499999 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:48:03.294259] | elapsed time:  | 0.08812427520751953
+[2023-01-07 17:48:03.296628] | rdc, prop | 6.774071149499999 | 0.00010336569999999999
+[2023-01-07 17:48:03.299213] | channel_id, mp, dc, relative, scale, channels | 4 | 1.033657 | 6.774071149499999 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:48:03.374066] | elapsed time:  | 0.07982850074768066
+[2023-01-07 17:48:03.376872] | rdc, prop | 6.774071149499999 | 0.00010336569999999999
+[2023-01-07 17:48:03.378981] | channel_id, mp, dc, relative, scale, channels | 5 | 1.033657 | 6.774071149499999 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:48:03.451980] | elapsed time:  | 0.07789754867553711
+[2023-01-07 17:48:03.454230] | rdc, prop | 6.774071149499999 | 0.00010336569999999999
+[2023-01-07 17:48:03.456430] | channel_id, mp, dc, relative, scale, channels | 6 | 1.033657 | 6.774071149499999 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:48:03.540531] | elapsed time:  | 0.08856439590454102
+[2023-01-07 17:48:03.542771] | rdc, prop | 6.774071149499999 | 0.00010336569999999999
+[2023-01-07 17:48:03.544970] | channel_id, mp, dc, relative, scale, channels | 7 | 1.033657 | 6.774071149499999 | False | True | <adafruit_pca9685.PCAChannels object at 0xb3a9beb0>
+[2023-01-07 17:48:03.626973] | elapsed time:  | 0.08642840385437012
+[2023-01-07 17:48:03.640054] | {'v': 68, 'r': 45, 'g': 45, 'a': 45, 'sw': 45, 'cw': 45, 'ww': 45, 'b': 45}
+[2023-01-07 17:48:03.642454] | Setting channels: {'v': 68, 'r': 45, 'g': 45, 'a': 45, 'sw': 45, 'cw': 45, 'ww': 45, 'b': 45}
+"GET /lightmanager/sbs/?scale&default=1.033657 HTTP/1.1" 200 93
+"GET /lightmanager/sbs/?scale&default=1.033657 HTTP/1.1" 200 93

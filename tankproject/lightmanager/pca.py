@@ -71,7 +71,7 @@ class BasePCA:
 
         # set all at once in tight loop to make transition fast
         # TODO: threads? is it even thread safe under the hood? different addresses, so hopefully...
-        for cid, mp in update_duty_cycle_by_cid.items():
+        for channel_id, duty_cycle in update_duty_cycle_by_cid.items():
             channels[channel_id].duty_cycle = duty_cycle
 
         logger.log(milli_percent_by_color_abbreviation)
