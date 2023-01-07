@@ -35,6 +35,7 @@ class BasePCA:
 
         # TODO: consider checking DB instead for performance.
         # hm, but not as accurate - what if external change happened?
+        # and not obvious that it's faster
         duty_cycle_before = channels[channel_id].duty_cycle
         assert not (relative and scale)
         if relative:
@@ -45,6 +46,7 @@ class BasePCA:
         duty_cycle = bound_duty(int(duty_cycle))
         channel = self.models.get_channel(channel_id)
         update = not utils.close_rel(duty_cycle, duty_cycle_before)
+        logger.log('!', duty_cycle, duty_cycle_before, update)
         if update:
         # TODO: try except?
             channel.milli_percent = to_milli_percent(duty_cycle)
