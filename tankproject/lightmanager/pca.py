@@ -64,7 +64,8 @@ class BasePCA:
         update_duty_cycle_by_cid = {}
 
         for cid, mp in milli_percents.items():
-            color_abbreviation, milli_percent, duty_cycle, update = self.set_brightness(cid, mp, relative, scale, channels)
+            stuff = color_abbreviation, milli_percent, duty_cycle, update = self.set_brightness(cid, mp, relative, scale, channels)
+            logger.log(*stuff)
             if update:
                 update_duty_cycle_by_cid[cid] = duty_cycle
             milli_percent_by_color_abbreviation[color_abbreviation] = milli_percent
