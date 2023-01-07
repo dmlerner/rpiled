@@ -53,7 +53,7 @@ class BasePCA:
         get_elapsed_time()
         # assert before != after
 
-        return channel.color_abbreviation, channel.milli_percent, update
+        return channel.color_abbreviation, channel.milli_percent, duty_cycle, update
 
 
     def set_brightnesses(self, milli_percents, relative=False, scale=False):
@@ -64,9 +64,9 @@ class BasePCA:
         update_duty_cycle_by_cid = {}
 
         for cid, mp in milli_percents.items():
-            color_abbreviation, milli_percent, update = self.set_brightness(cid, mp, relative, scale, channels)
+            color_abbreviation, milli_percent, duty_cycle, update = self.set_brightness(cid, mp, relative, scale, channels)
             if update:
-                update_duty_cycle_by_cid[cid] = milli_percent
+                update_duty_cycle_by_cid[cid] = duty_cycle
             milli_percent_by_color_abbreviation[color_abbreviation] = milli_percent
 
         # set all at once in tight loop to make transition fast
