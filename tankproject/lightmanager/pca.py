@@ -13,7 +13,7 @@ def normalize(duty_cycle_before, duty_cycle):
     if duty_cycle>>4 == duty_cycle_before>>4:
         if duty_cycle > duty_cycle_before:
             return (duty_cycle_before>>4+1)<<4
-        else duty_cycle < duty_cycle_before:
+        elif duty_cycle < duty_cycle_before:
             return (duty_cycle_before>>4-1)<<4
     return duty_cycle
 
