@@ -1,10 +1,12 @@
 from django.http import HttpResponse
+from lightmanager import timesource
 import datetime
 
 
 from lightmanager import mylogger
 
 logger = mylogger.Logger()
+time_source = timesource.TimeSource()
 
 
 def get_only(request):
@@ -63,29 +65,24 @@ def get_request_brightness(request, channel_id, models):
 #     warmer = request.GET.get("warmer", None)
 #     cooler = request.GET.get("cooler", None)
 
-MIDNIGHT = datetime.datetime.combine(
-    datetime.date.today(),
-    datetime.datetime.min.time(),  # , tzinfo=pytz.reference.LocalTimezone()
-)
-
 
 def get_time_of_day_color_by_abbreviation(models):
     abbreviations = models.get_color_abbreviations()
-    now = datetime.datetime.now()
-    t = now - MIDNIGHT
+    now = time_source.get_now()
+    t = now - time_source.get_midnight()
     if t < datetime.timedelta(hours=6):
         return {abbr: 0 for abbr in abbreviations}
 
     sunrise = "sw r ww".split()
     if t < datetime.timedelta(hours=6, minutes=15):
-        return {abbr: 10 for abbr in sunrise}
+        return {abbr: 10*(abbr in sunrise) for abbr in abbreviations}
     if t < datetime.timedelta(hours=6, minutes=30):
-        return {abbr: 20 for abbr in sunrise}
+        return {abbr: 20*(abbr in sunrise) for abbr in abbreviations}
     if t < datetime.timedelta(hours=7):
-        return {abbr: 40 for abbr in sunrise}
+        return {abbr: 40*(abbr in sunrise) for abbr in abbreviations}
 
-    cool_multipliers = {"g": 0.5, "ww": 0.5, 'v': 2, 'r': 2, 'b': 2}
-    proportion = t / datetime.timedelta(hours=5)
+    cool_multipliers = {"g": 0.5, "ww": 0.5, "v": 2, "r": 2, "b": 2}
+    proportion = (t - datetime.timedelta(hours=7)) / datetime.timedelta(hours=5)
     max_brightness = 10000 / max(cool_multipliers.values())
     baseline = proportion * max_brightness
     if t < datetime.timedelta(hours=12):
@@ -96,7 +93,7 @@ def get_time_of_day_color_by_abbreviation(models):
     proportion = 2 - proportion
     baseline = proportion * max_brightness
     min_brightness = 40
-    #warm_multipliers = {"g": 0.5, "ww": 0.5, 'v': 2, 'r': 2, 'b': 2}
+    # warm_multipliers = {"g": 0.5, "ww": 0.5, 'v': 2, 'r': 2, 'b': 2}
     if t < datetime.timedelta(hours=21):
         # at 17 it hits min
         return {

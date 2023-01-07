@@ -1,9 +1,12 @@
 from dataclasses import dataclass
 from lightmanager import pca
 from lightmanager import utils
+from lightmanager import timesource
+from lightmanager import requestparser
 from django.test import TestCase
 from lightmanager.models import PWMChannel, PCA9685
 import lightmanager.models as models
+import datetime
 
 N_CHANNELS = 8
 
@@ -37,11 +40,17 @@ MILLI_PERCENT = MILLI * PERCENT
 
 
 def verify(actual, expected, close=True):
-    if close:
-        if all(utils.close_rel(a, e) for (a, e) in zip(actual, expected)):
+    if len(actual) == len(expected):
+        if isinstance(expected, dict):
+            equal_keys = set(actual.keys()) == set(expected.keys())
+            if equal_keys:
+                return verify([actual[k] for k in actual], [expected[k] for k in actual], close)
+
+        if close:
+            if all(utils.close_rel(a, e) for (a, e) in zip(actual, expected)):
+                return
+        elif actual == expected:
             return
-    elif actual == expected:
-        return
     print(actual, expected)
     assert False
 
@@ -102,6 +111,61 @@ class MyTestCase(TestCase):
         p.set_brightness(0, brightness, False, False, flush=True)
         expected_duty_cycles[0] = pca.MAX_DUTY_CYCLE * raw_proportion
         verify(p.get_duty_cycles(), expected_duty_cycles)
+
+    def test_schedule_off_at_night(self):
+        requestparser.time_source = timesource.TimeSource(
+            mock=True,
+            now=datetime.datetime(2023, 1, 7, 4, 0, 0),
+            today=datetime.datetime(2023, 1, 7, 1),
+        )
+        color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
+        verify(list(color_by_abbr.values()), [0] * 8)
+
+    def test_abbreviations(self):
+        abbreviations = models.get_color_abbreviations()
+        verify(abbreviations, ['v', 'r', 'g', 'a', 'sw', 'cw', 'ww', 'b'], False)
+
+    def test_schedule_dim_morning(self):
+        requestparser.time_source = timesource.TimeSource(
+            mock=True,
+            now=datetime.datetime(2023, 1, 7, 6, 50, 0),
+            today=datetime.datetime(2023, 1, 7, 1),
+        )
+        color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
+        abbreviations = models.get_color_abbreviations()
+        expected = { abbr: 0 for abbr in abbreviations }
+        for abbr in 'r sw ww'.split():
+            expected[abbr] = 40
+
+        verify(color_by_abbr, expected, False)
+
+    def test_schedule_before_noon(self):
+        requestparser.time_source = timesource.TimeSource(
+            mock=True,
+            now=datetime.datetime(2023, 1, 7, 11, 50, 0),
+            today=datetime.datetime(2023, 1, 7, 1),
+        )
+        color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
+        abbreviations = models.get_color_abbreviations()
+        expected = dict([('v', 9666.666666666666), ('r', 9666.666666666666), ('g', 2416.6666666666665), ('a', 4833.333333333333), ('sw', 4833.333333333333), ('cw', 4833.333333333333), ('ww', 2416.6666666666665), ('b', 9666.666666666666)])
+        # expected = {k: v*2 for (k, v) in expected.items()}
+
+        verify(color_by_abbr, expected, True)
+
+    def test_schedule_after_noon(self):
+        requestparser.time_source = timesource.TimeSource(
+            mock=True,
+            now=datetime.datetime(2023, 1, 7, 14, 00, 0),
+            today=datetime.datetime(2023, 1, 7, 1),
+        )
+        color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
+        abbreviations = models.get_color_abbreviations()
+        expected = dict([('v', 6000.000000000001), ('r', 6000.000000000001), ('g', 1500.0000000000002), ('a', 3000.0000000000005), ('sw', 3000.0000000000005), ('cw', 3000.0000000000005), ('ww', 1500.0000000000002), ('b', 6000.000000000001)])
+        # expected = {k: v*2 for (k, v) in expected.items()}
+
+        verify(color_by_abbr, expected, True)
+
+
 
 
 def test_relative():
