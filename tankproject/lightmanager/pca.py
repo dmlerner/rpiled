@@ -26,17 +26,18 @@ class BasePCA:
         return self._pca
 
     def set_brightness(
-        self, channel_id, milli_percent, relative=False, scale=False, channels=None
+        self, channel_id, milli_percent, relative=False, scale=False, channels=None, flush=False
     ):
         duty_cycle = to_duty_cycle(milli_percent)
         logger.log(
-            "channel_id, mp, dc, relative, scale, channels",
+            "channel_id, mp, dc, relative, scale, channels, flush",
             channel_id,
             milli_percent,
             duty_cycle,
             relative,
             scale,
             channels,
+            flush
         )
 
         channels = channels or self.get_pca().channels
@@ -52,14 +53,17 @@ class BasePCA:
             duty_cycle = duty_cycle_before * milli_percent
 
         duty_cycle = normalize(duty_cycle_before, duty_cycle)
-        update = duty_cycle == duty_cycle_before
+        update = duty_cycle != duty_cycle_before
 
         channel = self.models.get_channel(channel_id)
-        logger.log('!', duty_cycle, duty_cycle_before, update)
+        logger.log('new, before, update', duty_cycle, duty_cycle_before, update)
         if update:
         # TODO: try except?
             channel.milli_percent = to_milli_percent(duty_cycle)
             channel.save()
+            if flush:
+                logger.log('setting channel', channel_id, duty_cycle)
+                channels[channel_id].duty_cycle = duty_cycle
 
         get_elapsed_time()
         # assert before != after
@@ -67,7 +71,7 @@ class BasePCA:
         return channel.color_abbreviation, channel.milli_percent, duty_cycle, update
 
 
-    def set_brightnesses(self, milli_percents, relative=False, scale=False):
+    def set_brightnesses(self, milli_percents, relative=False, scale=False, flush=False):
         logger.log("set_brightnesses", milli_percents)
         channels = self.get_pca().channels
 
@@ -75,7 +79,7 @@ class BasePCA:
         update_duty_cycle_by_cid = {}
 
         for cid, mp in milli_percents.items():
-            stuff = color_abbreviation, milli_percent, duty_cycle, update = self.set_brightness(cid, mp, relative, scale, channels)
+            stuff = color_abbreviation, milli_percent, duty_cycle, update = self.set_brightness(cid, mp, relative, scale, channels, flush)
             logger.log(*stuff)
             if update:
                 update_duty_cycle_by_cid[cid] = duty_cycle
@@ -83,9 +87,10 @@ class BasePCA:
 
         # set all at once in tight loop to make transition fast
         # TODO: threads? is it even thread safe under the hood? different addresses, so hopefully...
-        for channel_id, duty_cycle in update_duty_cycle_by_cid.items():
-            logger.log('setting channel', channel_id, duty_cycle)
-            channels[channel_id].duty_cycle = duty_cycle
+        if not flush:
+            for channel_id, duty_cycle in update_duty_cycle_by_cid.items():
+                logger.log('setting channel', channel_id, duty_cycle)
+                channels[channel_id].duty_cycle = duty_cycle
 
         logger.log(milli_percent_by_color_abbreviation)
 

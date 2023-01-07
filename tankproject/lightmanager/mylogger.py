@@ -2,7 +2,7 @@ import logging
 import datetime
 
 class Logger:
-    def __init__(self, enable=True, stdout=False, default_level='info', name=''):
+    def __init__(self, enable=True, stdout=True, default_level='info', name=''):
         self.enable = enable
         self.stdout = stdout
         self.logger = logging.getLogger(name)
