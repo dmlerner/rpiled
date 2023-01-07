@@ -135,6 +135,10 @@ LOGGING = {
             'filename': 'log.txt'
         },
     },
+    'root': {
+        'handlers': ['file'],
+        'level': 'INFO',
+    },
     'loggers': {
         'django': {
             'handlers': ['file'],
