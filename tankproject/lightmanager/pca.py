@@ -51,7 +51,7 @@ class BasePCA:
         if scale:
             duty_cycle = duty_cycle_before * milli_percent
 
-        duty_cycle = normalize(before, after)
+        duty_cycle = normalize(duty_cycle_before, duty_cycle)
         update = duty_cycle == duty_cycle_before
 
         channel = self.models.get_channel(channel_id)
