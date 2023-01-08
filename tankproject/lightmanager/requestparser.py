@@ -102,7 +102,7 @@ def get_time_of_day_color_by_abbreviation(models):
 
     # linear ramp down 13-21
 
-    proportion = (t - datetime.timedelta(hours=13)) / datetime.timedelta(hours=8)
+    proportion = 1-(t - datetime.timedelta(hours=13)) / datetime.timedelta(hours=8)
     baseline = proportion * max_brightness
     min_brightness = 40
     # warm_multipliers = {"g": 0.5, "ww": 0.5, 'v': 2, 'r': 2, 'b': 2}

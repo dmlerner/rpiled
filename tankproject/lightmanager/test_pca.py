@@ -134,60 +134,78 @@ class MyTestCase(TestCase):
             today=datetime.datetime(2023, 1, 7, 1),
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
-        abbreviations = models.get_color_abbreviations()
         expected = {abbr: 0 for abbr in abbreviations}
         for abbr in "r sw ww".split():
             expected[abbr] = 40
 
         verify(color_by_abbr, expected, False)
 
-    def test_schedule_before_noon(self):
+    def test_schedule_before_peak(self):
         requestparser.time_source = timesource.TimeSource(
             mock=True,
-            now=datetime.datetime(2023, 1, 7, 11, 50, 0),
+            now=datetime.datetime(2023, 1, 7, 10, 00, 0),
             today=datetime.datetime(2023, 1, 7, 1),
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
-        abbreviations = models.get_color_abbreviations()
-        expected = dict(
-            [
-                ("v", 9666.666666666666),
-                ("r", 9666.666666666666),
-                ("g", 2416.6666666666665),
-                ("a", 4833.333333333333),
-                ("sw", 4833.333333333333),
-                ("cw", 4833.333333333333),
-                ("ww", 2416.6666666666665),
-                ("b", 9666.666666666666),
-            ]
+        expected = to_abbr_dict(
+            [6000.0, 6000.0, 1500.0, 3000.0, 3000.0, 3000.0, 1500.0, 6000.0]
         )
-        # expected = {k: v*2 for (k, v) in expected.items()}
 
         verify(color_by_abbr, expected, True)
 
-    def test_schedule_after_noon(self):
+    def test_schedule_on_peak(self):
         requestparser.time_source = timesource.TimeSource(
             mock=True,
-            now=datetime.datetime(2023, 1, 7, 14, 00, 0),
+            now=datetime.datetime(2023, 1, 7, 12, 00, 0),
             today=datetime.datetime(2023, 1, 7, 1),
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
-        abbreviations = models.get_color_abbreviations()
-        expected = dict(
-            [
-                ("v", 6000.000000000001),
-                ("r", 6000.000000000001),
-                ("g", 1500.0000000000002),
-                ("a", 3000.0000000000005),
-                ("sw", 3000.0000000000005),
-                ("cw", 3000.0000000000005),
-                ("ww", 1500.0000000000002),
-                ("b", 6000.000000000001),
-            ]
+        expected = to_abbr_dict(
+            [10000.0, 10000.0, 2500.0, 5000.0, 5000.0, 5000.0, 2500.0, 10000.0]
         )
-        # expected = {k: v*2 for (k, v) in expected.items()}
 
         verify(color_by_abbr, expected, True)
+
+    def test_schedule_after_peak(self):
+        requestparser.time_source = timesource.TimeSource(
+            mock=True,
+            now=datetime.datetime(2023, 1, 7, 15, 00, 0),
+            today=datetime.datetime(2023, 1, 7, 1),
+        )
+        color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
+        expected = to_abbr_dict(
+            [2500.0, 2500.0, 625.0, 1250.0, 1250.0, 1250.0, 625.0, 2500.0]
+        )
+
+        verify(color_by_abbr, expected, True)
+
+    def test_near_dark(self):
+        requestparser.time_source = timesource.TimeSource(
+            mock=True,
+            now=datetime.datetime(2023, 1, 7, 20, 50, 0),
+            today=datetime.datetime(2023, 1, 7, 1),
+        )
+        color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
+        expected = to_abbr_dict(
+            [208.3333333333337, 208.3333333333337, 52.08333333333343, 104.16666666666686, 104.16666666666686, 104.16666666666686, 52.08333333333343, 208.3333333333337]
+        )
+
+        verify(color_by_abbr, expected, True)
+
+    def test_monotonic(self):
+        # TODO: test that pca.set doesn't mess it up further
+        now = datetime.datetime(2023, 1, 7, 20, 50, 0)
+        last_actual = to_abbr_dict([208.3333333333337, 208.3333333333337, 52.08333333333343, 104.16666666666686, 104.16666666666686, 104.16666666666686, 52.08333333333343, 208.3333333333337])
+        for d_minutes in range(1, 90):
+            now += datetime.timedelta(minutes=1)
+            requestparser.time_source = timesource.TimeSource(
+                mock=True,
+                now=now,
+                today=datetime.datetime(2023, 1, 7, 1),
+            )
+            color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
+            for v_last, v_now in zip(last_actual.values(), color_by_abbr.values()):
+                assert v_last >= v_now
 
 
 def test_relative():
@@ -208,6 +226,10 @@ def test():
             except:
                 print("fails" + "!" * 20)
             print()
+
+
+def to_abbr_dict(milli_percents):
+    return dict(zip(("v", "r", "g", "a", "sw", "cw", "ww", "b"), milli_percents))
 
 
 if __name__ == "__main__":
