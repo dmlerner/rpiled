@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from lightmanager import timesource
 import datetime
+from dataclasses import dataclass
 
 
 from lightmanager import mylogger
@@ -25,29 +26,13 @@ def get_schedule(request):
     return get_default_false(request, "schedule")
 
 
+def get_delay(request):
+    return get_default_false(request, "delay")
+
+
 def get_default_false(request, key):
     x = request.GET.get(key.lower(), None)
     return str(x).lower() in ("true", "1", "")
-
-
-def load_options(request, models):
-    default = request.GET.get("default", 0)
-    only = get_only(request)  # defaults to false
-    relative = get_relative(request)  # defaults to false
-    scale = get_scale(request)  # defaults to false
-    request_brightness_by_channel_id = {
-        channel_id: get_request_brightness(request, channel_id, models)
-        for channel_id in models.CHANNEL_IDS
-    }
-    schedule = get_schedule(request)
-    logger.log(f"{default=}")
-    logger.log(f"{only=}")
-    logger.log(f"{relative=}")
-    logger.log(f"{scale=}")
-    logger.log(f"{request_brightness_by_channel_id=}")
-    logger.log(f"{schedule=}")
-    assert not (schedule and only)
-    return default, only, relative, scale, request_brightness_by_channel_id, schedule
 
 
 def get_request_brightness(request, channel_id, models):
@@ -68,6 +53,8 @@ def get_request_brightness(request, channel_id, models):
 
 def get_time_of_day_color_by_abbreviation(models):
     # TODO: pass in points and have it do linear interpolation
+    # or even better, p-nomial interpolation
+    # or even allow exponentials
     abbreviations = models.get_color_abbreviations()
     now = time_source.get_now()
     t = now - time_source.get_midnight()
@@ -103,7 +90,7 @@ def get_time_of_day_color_by_abbreviation(models):
 
     # linear ramp down 13-21
 
-    proportion = 1-(t - datetime.timedelta(hours=13)) / datetime.timedelta(hours=8)
+    proportion = 1 - (t - datetime.timedelta(hours=13)) / datetime.timedelta(hours=8)
     baseline = proportion * max_brightness
     min_brightness = 40
     # warm_multipliers = {"g": 0.5, "ww": 0.5, 'v': 2, 'r': 2, 'b': 2}
@@ -121,3 +108,40 @@ def get_time_of_day_color_by_abbreviation(models):
     if t < datetime.timedelta(hours=22, minutes=30):
         return {abbr: 20 for abbr in sunrise}
     return {abbr: 0 for abbr in abbreviations}
+
+
+@dataclass
+class Options:
+    default: float = 0
+    only: bool = False
+    relative: bool = False
+    scale: bool = False
+    request_brightness_by_channel_id: dict = None
+    schedule: bool = False
+    delay: float = 0
+
+
+def load_options(request, models):
+    default = request.GET.get("default", 0)
+    only = get_only(request)
+    relative = get_relative(request)
+    scale = get_scale(request)
+    request_brightness_by_channel_id = {
+        channel_id: get_request_brightness(request, channel_id, models)
+        for channel_id in models.CHANNEL_IDS
+    }
+    schedule = get_schedule(request)
+    delay = get_delay(request)
+    assert not (schedule and only)
+
+    ret = Options(
+        default=default,
+        only=only,
+        relative=relative,
+        scale=scale,
+        request_brightness_by_channel_id=request_brightness_by_channel_id,
+        schedule=schedule,
+        delay=delay,
+    )
+    logger.log(ret)
+    return ret

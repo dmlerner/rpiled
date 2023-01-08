@@ -3,7 +3,8 @@ from lightmanager import pca
 from lightmanager import utils
 from lightmanager import timesource
 from lightmanager import requestparser
-from django.test import TestCase
+from lightmanager import views
+from django.test import TestCase, Client
 from lightmanager.models import PWMChannel, PCA9685
 import lightmanager.models as models
 import datetime
@@ -114,6 +115,18 @@ class MyTestCase(TestCase):
         expected_duty_cycles[0] = pca.MAX_DUTY_CYCLE * raw_proportion
         verify(p.get_duty_cycles(), expected_duty_cycles)
 
+    def test_absolute_happy_path_request(self):
+        p = MockPCA(models)
+        views.pca = p
+        raw_proportion = 0.5
+        brightness = raw_proportion * MILLI_PERCENT
+        expected_duty_cycles = [raw_proportion * 2**16] * N_CHANNELS
+        c = Client()
+
+        c.get("/lightmanager/sbs/", {"default": brightness})
+
+        verify(p.get_duty_cycles(), expected_duty_cycles)
+
     def test_schedule_off_at_night(self):
         requestparser.time_source = timesource.TimeSource(
             mock=True,
@@ -149,7 +162,16 @@ class MyTestCase(TestCase):
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
         expected = to_abbr_dict(
-            [9791.666666666666, 9791.666666666666, 2447.9166666666665, 4895.833333333333, 4895.833333333333, 4895.833333333333, 2447.9166666666665, 9791.666666666666]
+            [
+                9791.666666666666,
+                9791.666666666666,
+                2447.9166666666665,
+                4895.833333333333,
+                4895.833333333333,
+                4895.833333333333,
+                2447.9166666666665,
+                9791.666666666666,
+            ]
         )
 
         verify(color_by_abbr, expected, True)
@@ -175,7 +197,16 @@ class MyTestCase(TestCase):
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
         expected = to_abbr_dict(
-            [9895.833333333334, 9895.833333333334, 2473.9583333333335, 4947.916666666667, 4947.916666666667, 4947.916666666667, 2473.9583333333335, 9895.833333333334]
+            [
+                9895.833333333334,
+                9895.833333333334,
+                2473.9583333333335,
+                4947.916666666667,
+                4947.916666666667,
+                4947.916666666667,
+                2473.9583333333335,
+                9895.833333333334,
+            ]
         )
 
         verify(color_by_abbr, expected, True)
@@ -188,7 +219,16 @@ class MyTestCase(TestCase):
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
         expected = to_abbr_dict(
-            [208.3333333333337, 208.3333333333337, 52.08333333333343, 104.16666666666686, 104.16666666666686, 104.16666666666686, 52.08333333333343, 208.3333333333337]
+            [
+                208.3333333333337,
+                208.3333333333337,
+                52.08333333333343,
+                104.16666666666686,
+                104.16666666666686,
+                104.16666666666686,
+                52.08333333333343,
+                208.3333333333337,
+            ]
         )
 
         verify(color_by_abbr, expected, True)
@@ -196,7 +236,18 @@ class MyTestCase(TestCase):
     def test_monotonic(self):
         # TODO: test that pca.set doesn't mess it up further
         now = datetime.datetime(2023, 1, 7, 20, 50, 0)
-        last_actual = to_abbr_dict([208.3333333333337, 208.3333333333337, 52.08333333333343, 104.16666666666686, 104.16666666666686, 104.16666666666686, 52.08333333333343, 208.3333333333337])
+        last_actual = to_abbr_dict(
+            [
+                208.3333333333337,
+                208.3333333333337,
+                52.08333333333343,
+                104.16666666666686,
+                104.16666666666686,
+                104.16666666666686,
+                52.08333333333343,
+                208.3333333333337,
+            ]
+        )
         for d_minutes in range(1, 90):
             now += datetime.timedelta(minutes=1)
             requestparser.time_source = timesource.TimeSource(

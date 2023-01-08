@@ -19,6 +19,7 @@ class BasePCA:
         return self._pca
 
     def set_brightness(
+        # TODO: message
         self,
         channel_id,
         milli_percent,
@@ -142,7 +143,7 @@ def normalize(duty_cycle_before, duty_cycle):
     if utils.close_rel(duty_cycle_before, duty_cycle):
         return duty_cycle
 
-    #TODO: needed?
+    # TODO: needed?
     if duty_cycle_before < 2**5:
         if duty_cycle >> 4 == duty_cycle_before >> 4:
             if duty_cycle > duty_cycle_before:
