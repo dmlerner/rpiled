@@ -73,7 +73,7 @@ class BasePCA:
         return channel.color_abbreviation, channel.milli_percent, duty_cycle, update
 
     def set_brightnesses(
-        self, milli_percents, relative=False, scale=False, flush=False
+        self, milli_percents, relative=False, scale=False, flush=False, delay=0
     ):
         logger.log("set_brightnesses", milli_percents)
         channels = self.get_pca().channels
@@ -82,6 +82,8 @@ class BasePCA:
         update_duty_cycle_by_cid = {}
 
         for cid, mp in milli_percents.items():
+            if delay and cid != 0:
+                time.sleep(delay)
             stuff = (
                 color_abbreviation,
                 milli_percent,

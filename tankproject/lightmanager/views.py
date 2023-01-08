@@ -46,8 +46,6 @@ def set_default_brightness(options):
     color_abbreviations = models.get_color_abbreviations()
     color_by_abbreviation = requestparser.get_time_of_day_color_by_abbreviation(models)
     for channel_id in models.CHANNEL_IDS:
-        if options.delay and channel_id != 0:
-            time.sleep(options.delay)
 
         if options.schedule:
             color_abbreviation = color_abbreviations[channel_id]
@@ -66,7 +64,7 @@ def set_default_brightness(options):
         brightness_by_channel_id[channel_id] = brightness
 
     milli_percent_by_color_abbreviation = pca.set_brightnesses(
-        brightness_by_channel_id, relative=options.relative, scale=options.scale
+        brightness_by_channel_id, relative=options.relative, scale=options.scale, delay=options.delay
     )
     response_str = f"Setting channels: {milli_percent_by_color_abbreviation}"
     logger.log(response_str)
