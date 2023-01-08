@@ -29,7 +29,8 @@ def get_schedule(request):
 
 
 def get_delay(request):
-    return request.GET.get("delay", 0)
+    # don't use get_default_false, since this is something with a value we don't want to set from default
+    return float(request.GET.get("delay", 0))
 
 
 def get_default_false(request, key):
