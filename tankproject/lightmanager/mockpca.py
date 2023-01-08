@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from lightmanager import pca
 from lightmanager import utils
+
 # TODO: either rename this "local server pca" or merger with test mock pca
 
 N_CHANNELS = 8
