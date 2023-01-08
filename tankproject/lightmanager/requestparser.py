@@ -9,6 +9,8 @@ from lightmanager import mylogger
 logger = mylogger.Logger()
 time_source = timesource.TimeSource()
 
+N_CHANNELS = 8
+
 
 def get_only(request):
     return get_default_false(request, "only")
@@ -27,7 +29,7 @@ def get_schedule(request):
 
 
 def get_delay(request):
-    return get_default_false(request, "delay")
+    return request.GET.get("delay", 0)
 
 
 def get_default_false(request, key):
@@ -119,6 +121,10 @@ class Options:
     request_brightness_by_channel_id: dict = None
     schedule: bool = False
     delay: float = 0
+
+    def __post_init__(self):
+        if self.request_brightness_by_channel_id is None:
+            self.request_brightness_by_channel_id = { i: None for i in range(N_CHANNELS)}
 
 
 def load_options(request, models):
