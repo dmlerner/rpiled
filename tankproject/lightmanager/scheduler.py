@@ -32,7 +32,6 @@ def interpolate(
         ] + p * brightness_by_color_abbreviation2[
             k
         ]
-    print(f"{ brightness_by_color_abbreviation=}")
     return brightness_by_color_abbreviation
 
 
@@ -40,16 +39,12 @@ def build_schedule(change_times, brightness_by_color_abbreviations):
     # TODO: nonlinear interpolation
     # can just pass point twice to get constant
     assert change_times == sorted(change_times)
-    print(change_times)
 
     def schedule(t):
-        print(t)
         if t <= change_times[0]:
-            print("start")
             return brightness_by_color_abbreviations[0]
         for i, change_time in enumerate(change_times):
             if t < change_time:
-                print("middle", t, change_time)
                 return interpolate(
                     t,
                     change_times[i - 1],
@@ -58,7 +53,6 @@ def build_schedule(change_times, brightness_by_color_abbreviations):
                     brightness_by_color_abbreviations[i],
                 )
 
-        print("end")
         return brightness_by_color_abbreviations[-1]
 
     return schedule
