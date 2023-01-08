@@ -10,16 +10,6 @@ MAX_DUTY_CYCLE = 2**16 - 1
 FREQUENCY = 2441
 
 
-def normalize(duty_cycle_before, duty_cycle):
-    duty_cycle = bound_duty(round(duty_cycle))
-    if duty_cycle >> 4 == duty_cycle_before >> 4:
-        if duty_cycle > duty_cycle_before:
-            return (duty_cycle_before >> 4 + 1) << 4
-        elif duty_cycle < duty_cycle_before:
-            return (duty_cycle_before >> 4 - 1) << 4
-    return duty_cycle
-
-
 class BasePCA:
     def __init__(self, models):
         self._pca = None
@@ -62,7 +52,7 @@ class BasePCA:
             duty_cycle = duty_cycle_before * milli_percent
 
         duty_cycle = normalize(duty_cycle_before, duty_cycle)
-        update = duty_cycle != duty_cycle_before
+        update = (not utils.close_rel(duty_cycle, duty_cycle_before)) and duty_cycle != duty_cycle_before
 
         channel = self.models.get_channel(channel_id)
         logger.log("new, before, update", duty_cycle, duty_cycle_before, update)
@@ -143,3 +133,14 @@ def to_duty_cycle(milli_percent):
 
 def to_milli_percent(duty_cycle):
     return int(round(float(duty_cycle) / (2**16 - 1) * 100 * MILLI))
+
+def normalize(duty_cycle_before, duty_cycle):
+    duty_cycle = bound_duty(round(duty_cycle))
+    if duty_cycle >> 4 == duty_cycle_before >> 4:
+        if duty_cycle > duty_cycle_before:
+            return (duty_cycle_before >> 4 + 1) << 4
+        elif duty_cycle < duty_cycle_before:
+            return (duty_cycle_before >> 4 - 1) << 4
+    return duty_cycle
+
+
