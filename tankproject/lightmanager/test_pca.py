@@ -128,6 +128,7 @@ class MyTestCase(TestCase):
         verify(abbreviations, ["v", "r", "g", "a", "sw", "cw", "ww", "b"], False)
 
     def test_schedule_dim_morning(self):
+        abbreviations = models.get_color_abbreviations()
         requestparser.time_source = timesource.TimeSource(
             mock=True,
             now=datetime.datetime(2023, 1, 7, 6, 50, 0),
@@ -143,12 +144,12 @@ class MyTestCase(TestCase):
     def test_schedule_before_peak(self):
         requestparser.time_source = timesource.TimeSource(
             mock=True,
-            now=datetime.datetime(2023, 1, 7, 10, 00, 0),
+            now=datetime.datetime(2023, 1, 7, 10, 55, 0),
             today=datetime.datetime(2023, 1, 7, 1),
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
         expected = to_abbr_dict(
-            [6000.0, 6000.0, 1500.0, 3000.0, 3000.0, 3000.0, 1500.0, 6000.0]
+            [9791.666666666666, 9791.666666666666, 2447.9166666666665, 4895.833333333333, 4895.833333333333, 4895.833333333333, 2447.9166666666665, 9791.666666666666]
         )
 
         verify(color_by_abbr, expected, True)
@@ -169,12 +170,12 @@ class MyTestCase(TestCase):
     def test_schedule_after_peak(self):
         requestparser.time_source = timesource.TimeSource(
             mock=True,
-            now=datetime.datetime(2023, 1, 7, 15, 00, 0),
+            now=datetime.datetime(2023, 1, 7, 13, 5, 0),
             today=datetime.datetime(2023, 1, 7, 1),
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
         expected = to_abbr_dict(
-            [2500.0, 2500.0, 625.0, 1250.0, 1250.0, 1250.0, 625.0, 2500.0]
+            [9895.833333333334, 9895.833333333334, 2473.9583333333335, 4947.916666666667, 4947.916666666667, 4947.916666666667, 2473.9583333333335, 9895.833333333334]
         )
 
         verify(color_by_abbr, expected, True)

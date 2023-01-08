@@ -67,6 +67,7 @@ def get_request_brightness(request, channel_id, models):
 
 
 def get_time_of_day_color_by_abbreviation(models):
+    # TODO: pass in points and have it do linear interpolation
     abbreviations = models.get_color_abbreviations()
     now = time_source.get_now()
     t = now - time_source.get_midnight()
@@ -84,7 +85,7 @@ def get_time_of_day_color_by_abbreviation(models):
     # linear ramp up from 7-11
 
     cool_multipliers = {"g": 0.5, "ww": 0.5, "v": 2, "r": 2, "b": 2}
-    proportion = (t - datetime.timedelta(hours=7)) / datetime.timedelta(hours=5)
+    proportion = (t - datetime.timedelta(hours=7)) / datetime.timedelta(hours=4)
     max_brightness = 10000 / max(cool_multipliers.values())
     baseline = proportion * max_brightness
     if t < datetime.timedelta(hours=11):

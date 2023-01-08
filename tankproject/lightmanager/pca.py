@@ -139,9 +139,14 @@ def to_milli_percent(duty_cycle):
 
 def normalize(duty_cycle_before, duty_cycle):
     duty_cycle = bound_duty(round(duty_cycle))
-    if duty_cycle >> 4 == duty_cycle_before >> 4:
-        if duty_cycle > duty_cycle_before:
-            return (duty_cycle_before >> 4 + 1) << 4
-        elif duty_cycle < duty_cycle_before:
-            return (duty_cycle_before >> 4 - 1) << 4
+    if utils.close_rel(duty_cycle_before, duty_cycle):
+        return duty_cycle
+
+    #TODO: needed?
+    if duty_cycle_before < 2**5:
+        if duty_cycle >> 4 == duty_cycle_before >> 4:
+            if duty_cycle > duty_cycle_before:
+                return (duty_cycle_before >> 4 + 1) << 4
+            elif duty_cycle < duty_cycle_before:
+                return (duty_cycle_before >> 4 - 1) << 4
     return duty_cycle
