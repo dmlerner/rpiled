@@ -64,7 +64,10 @@ def set_default_brightness(options):
         brightness_by_channel_id[channel_id] = brightness
 
     milli_percent_by_color_abbreviation = pca.set_brightnesses(
-        brightness_by_channel_id, relative=options.relative, scale=options.scale, delay=options.delay
+        brightness_by_channel_id,
+        relative=options.relative,
+        scale=options.scale,
+        delay=options.delay,
     )
     response_str = f"Setting channels: {milli_percent_by_color_abbreviation}"
     logger.log(response_str)

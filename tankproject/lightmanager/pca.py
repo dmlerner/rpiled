@@ -82,8 +82,6 @@ class BasePCA:
         update_duty_cycle_by_cid = {}
 
         for cid, mp in milli_percents.items():
-            if delay and cid != 0:
-                time.sleep(delay)
             stuff = (
                 color_abbreviation,
                 milli_percent,
@@ -97,8 +95,14 @@ class BasePCA:
 
         # set all at once in tight loop to make transition fast
         # TODO: threads? is it even thread safe under the hood? different addresses, so hopefully...
+        skipped_first_pause = False
         if not flush:
             for channel_id, duty_cycle in update_duty_cycle_by_cid.items():
+                if delay:
+                    if skipped_first_pause:
+                        time.sleep(delay)
+                    else:
+                        skipped_first_pause = True
                 logger.log("setting channel", channel_id, duty_cycle)
                 channels[channel_id].duty_cycle = duty_cycle
 
