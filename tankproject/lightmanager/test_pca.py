@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from lightmanager import pca
 from lightmanager import utils
 from lightmanager import timesource
-from lightmanager import requestparser
+from lightmanager import requestparser, scheduler
 from lightmanager import views
 from django.test import TestCase, Client
 from lightmanager.models import PWMChannel, PCA9685
@@ -128,7 +128,7 @@ class MyTestCase(TestCase):
         verify(p.get_duty_cycles(), expected_duty_cycles)
 
     def test_schedule_off_at_night(self):
-        requestparser.time_source = timesource.TimeSource(
+        scheduler.time_source = timesource.TimeSource(
             mock=True,
             now=datetime.datetime(2023, 1, 7, 4, 0, 0),
             today=datetime.datetime(2023, 1, 7, 1),
@@ -142,7 +142,7 @@ class MyTestCase(TestCase):
 
     def test_schedule_dim_morning(self):
         abbreviations = models.get_color_abbreviations()
-        requestparser.time_source = timesource.TimeSource(
+        scheduler.time_source = timesource.TimeSource(
             mock=True,
             now=datetime.datetime(2023, 1, 7, 6, 50, 0),
             today=datetime.datetime(2023, 1, 7, 1),
@@ -155,7 +155,7 @@ class MyTestCase(TestCase):
         verify(color_by_abbr, expected, False)
 
     def test_schedule_before_peak(self):
-        requestparser.time_source = timesource.TimeSource(
+        scheduler.time_source = timesource.TimeSource(
             mock=True,
             now=datetime.datetime(2023, 1, 7, 10, 55, 0),
             today=datetime.datetime(2023, 1, 7, 1),
@@ -177,7 +177,7 @@ class MyTestCase(TestCase):
         verify(color_by_abbr, expected, True)
 
     def test_schedule_on_peak(self):
-        requestparser.time_source = timesource.TimeSource(
+        scheduler.time_source = timesource.TimeSource(
             mock=True,
             now=datetime.datetime(2023, 1, 7, 12, 00, 0),
             today=datetime.datetime(2023, 1, 7, 1),
@@ -190,7 +190,7 @@ class MyTestCase(TestCase):
         verify(color_by_abbr, expected, True)
 
     def test_schedule_after_peak(self):
-        requestparser.time_source = timesource.TimeSource(
+        scheduler.time_source = timesource.TimeSource(
             mock=True,
             now=datetime.datetime(2023, 1, 7, 13, 5, 0),
             today=datetime.datetime(2023, 1, 7, 1),
@@ -212,22 +212,23 @@ class MyTestCase(TestCase):
         verify(color_by_abbr, expected, True)
 
     def test_near_dark(self):
-        requestparser.time_source = timesource.TimeSource(
+        now = datetime.datetime(2023, 1, 7, 22, 29, 0)
+        scheduler.time_source = timesource.TimeSource(
             mock=True,
-            now=datetime.datetime(2023, 1, 7, 20, 50, 0),
+            now=now,
             today=datetime.datetime(2023, 1, 7, 1),
         )
         color_by_abbr = requestparser.get_time_of_day_color_by_abbreviation(models)
         expected = to_abbr_dict(
             [
-                208.3333333333337,
-                208.3333333333337,
-                52.08333333333343,
-                104.16666666666686,
-                104.16666666666686,
-                104.16666666666686,
-                52.08333333333343,
-                208.3333333333337,
+                0.0,
+                10.666666666666668,
+                0.0,
+                0.0,
+                10.666666666666668,
+                0.0,
+                10.666666666666668,
+                0.0,
             ]
         )
 
@@ -250,7 +251,7 @@ class MyTestCase(TestCase):
         )
         for d_minutes in range(1, 90):
             now += datetime.timedelta(minutes=1)
-            requestparser.time_source = timesource.TimeSource(
+            scheduler.time_source = timesource.TimeSource(
                 mock=True,
                 now=now,
                 today=datetime.datetime(2023, 1, 7, 1),
